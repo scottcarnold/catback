@@ -9,11 +9,10 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-//import org.xandercat.cat.back.CatBackSettings;
-//import org.xandercat.cat.back.ui.CatBackFrame;
+import org.xandercat.cat.back.swing.frame.CatBackFrame;
+import org.xandercat.swing.file.FileManager;
+import org.xandercat.swing.util.ArgumentProcessor;
 //import org.xandercat.cat.back.ui.ImmediateFileBackupFrame;
-//import org.xandercat.common.ui.file.FileManager;
-//import org.xandercat.common.ui.file.FilesSizeMonitor;
 //import org.xandercat.common.util.ArgumentProcessor;
 import org.xandercat.swing.util.PlatformTool;
 
@@ -47,80 +46,72 @@ public class CatBack {
 	public static void main(String[] args) {
 		
 		// process command-line arguments
-//		ArgumentProcessor argumentProcessor = new ArgumentProcessor();
-//		argumentProcessor.addValidSwitchValuePair(IMMEDIATE_BACKUP_KEY, "<filename>", "Backup the given Backup Profile", null);
-//		argumentProcessor.addValidSwitch(FILES_SIZE_MONITOR_KEY, "Activates a performance monitor window");
+		ArgumentProcessor argumentProcessor = new ArgumentProcessor();
+		argumentProcessor.addValidSwitchValuePair(IMMEDIATE_BACKUP_KEY, "<filename>", "Backup the given Backup Profile", null);
 //		LoggingUtil.addArgumentProcessorSwitchValuePair(argumentProcessor, LOG_KEY);
-//		argumentProcessor.process(args);
+		argumentProcessor.process(args);
 //		Properties defaultProperties = LoggingUtil.getBasicFileLoggingProperties(
 //				"catback.log", Level.INFO, "CAT", "org.xandercat");
 //		LoggingUtil.configureLogging(argumentProcessor, LOG_KEY, LoggingUtil.PROPERTIES, defaultProperties);
 //		log.debug("Logging configured.");
 		PlatformTool.setApplicationNameOnMac(APPLICATION_NAME);
-//		final String backupFilename = argumentProcessor.getValueForSwitch(IMMEDIATE_BACKUP_KEY);
-//		final boolean normalMode = backupFilename == null;
-//		final boolean activateMonitor = argumentProcessor.isSwitchPresent(FILES_SIZE_MONITOR_KEY);
+		final String backupFilename = argumentProcessor.getValueForSwitch(IMMEDIATE_BACKUP_KEY);
 
-//		// load application settings
-//		Object settingsObject = null;
-//		CatBackSettings settings = null;
-//		try {
-//			settingsObject = FileManager.loadObject(CatBackSettings.SETTINGS_FILE, CatBackSettings.class);
-//		} catch (IOException ioe) {
-//			log.warn("Unable to load catback settings.", ioe);
-//		}
-//		if (settingsObject != null && settingsObject instanceof CatBackSettings) {
-//			settings = (CatBackSettings) settingsObject;
-//			log.info("Settings loaded.");
-//		} else {
-//			settings = new CatBackSettings();
-//			if (PlatformTool.isWindows()) {
-//				// set default Windows L&F to Nimbus
-//				for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
-//					if (lafInfo.getName().toLowerCase().contains("nimbus")) {
-//						settings.setLookAndFeelName(lafInfo.getName());
-//						break;
-//					}
-//				}
-//			}
-//			log.info("Using default application settings.");
-//		}
-//		final CatBackSettings finalSettings = settings;
-//		
-//		// set Look and Feel
-//		if (normalMode && finalSettings.getLookAndFeelName() != null) {
-//			for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
-//				if (finalSettings.getLookAndFeelName().equals(lafInfo.getName())) {
-//					try {
-//						UIManager.setLookAndFeel(lafInfo.getClassName());
-//					} catch (Exception e) {
-//						log.error("Unable to set up Look and Feel " + lafInfo.getName(), e);
-//					}
-//					break;
-//				}
-//			}
-//		}
-//		
-//		// launch application
-//		SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				if (normalMode) {
-//					launchUI(activateMonitor, finalSettings);
-//				} else {
+		// load application settings
+		Object settingsObject = null;
+		final CatBackSettings settings;
+		try {
+			settingsObject = FileManager.loadObject(CatBackSettings.SETTINGS_FILE, CatBackSettings.class);
+		} catch (IOException ioe) {
+			log.warn("Unable to load catback settings.", ioe);
+		}
+		if (settingsObject != null && settingsObject instanceof CatBackSettings) {
+			settings = (CatBackSettings) settingsObject;
+			log.info("Settings loaded.");
+		} else {
+			settings = new CatBackSettings();
+			if (PlatformTool.isWindows()) {
+				// set default Windows L&F to Nimbus
+				for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
+					if (lafInfo.getName().toLowerCase().contains("nimbus")) {
+						settings.setLookAndFeelName(lafInfo.getName());
+						break;
+					}
+				}
+			}
+			log.info("Using default application settings.");
+		}
+		
+		// set Look and Feel
+		if (settings.getLookAndFeelName() != null) {
+			for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
+				if (settings.getLookAndFeelName().equals(lafInfo.getName())) {
+					try {
+						UIManager.setLookAndFeel(lafInfo.getClassName());
+					} catch (Exception e) {
+						log.error("Unable to set up Look and Feel " + lafInfo.getName(), e);
+					}
+					break;
+				}
+			}
+		}
+		
+		// launch application
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				if (backupFilename == null) {
+					launchUI(settings);
+				} else {
 //					launchImmediateBackup(backupFilename);
-//				}
-//			}
-//		}); 
+				}
+			}
+		}); 
 	}
 
-//	private static void launchUI(boolean activateMonitor, CatBackSettings settings) {
-//		if (activateMonitor) {
-//			FilesSizeMonitor monitor = new FilesSizeMonitor();
-//			monitor.setVisible(true);
-//		}
-//		CatBackFrame ui = new CatBackFrame(settings);
-//		ui.setVisible(true);
-//	}
+	private static void launchUI(CatBackSettings settings) {
+		CatBackFrame ui = new CatBackFrame(APPLICATION_NAME, APPLICATION_VERSION, settings);
+		ui.setVisible(true);
+	}
 //	
 //	public static void launchImmediateBackup(String backupProfileFilename) {
 //		ImmediateFileBackupFrame ui = new ImmediateFileBackupFrame(backupProfileFilename);
