@@ -28,3 +28,7 @@ hs_err_pid*
 .project
 .classpath
 .settings
+
+# CatBack files as a convenience
+catback_settings.dat
+catback_trees.dat

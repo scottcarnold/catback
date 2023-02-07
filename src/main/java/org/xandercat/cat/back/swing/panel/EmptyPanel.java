@@ -30,7 +30,7 @@ public class EmptyPanel extends DesignerPanel implements CatBackPanel {
 	
 	private CatBackFrame catBackFrame;
 	
-	public EmptyPanel(final CatBackFrame catBackFrame, String applicationName) {
+	public EmptyPanel(final CatBackFrame catBackFrame) {
 		super();
 		this.catBackFrame = catBackFrame;
 		addSingleImage(Images.getImage(Images.CATBACK), true, true, SwingConstants.CENTER, 0.1f);
@@ -47,7 +47,7 @@ public class EmptyPanel extends DesignerPanel implements CatBackPanel {
 				catBackFrame.executeOpen(null);
 			}
 		});
-		JLabel welcomeLabel = new JLabel("Welcome to " + applicationName + "!");
+		JLabel welcomeLabel = new JLabel("Welcome to " + catBackFrame.getApplicationName() + "!");
 		JLabel qLabel = new JLabel("How would you like to get started?");
 		welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		qLabel.setAlignmentX(Component.CENTER_ALIGNMENT);

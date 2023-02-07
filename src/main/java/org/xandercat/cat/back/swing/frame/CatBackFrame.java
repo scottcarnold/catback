@@ -50,9 +50,11 @@ import org.xandercat.cat.back.swing.panel.BackupResources;
 import org.xandercat.cat.back.swing.panel.CatBackPanelHandler;
 import org.xandercat.cat.back.swing.panel.CatBackPanelHandlerListCellRenderer;
 import org.xandercat.cat.back.swing.panel.EmptyPanel;
+import org.xandercat.cat.back.swing.panel.SummaryPanel;
 import org.xandercat.cat.back.swing.tree.CatBackFileTreeCellRenderer;
 import org.xandercat.swing.app.ApplicationFrame;
 import org.xandercat.swing.component.ButtonFactory;
+import org.xandercat.swing.dialog.AboutDialog;
 import org.xandercat.swing.file.FileManager;
 import org.xandercat.swing.file.FileManagerListener;
 import org.xandercat.swing.file.SaveOnCloseAction;
@@ -60,6 +62,7 @@ import org.xandercat.swing.file.SaveOnCloseObjectFinalizer;
 import org.xandercat.swing.file.icon.FileIconCache;
 import org.xandercat.swing.file.icon.FileIconSet;
 import org.xandercat.swing.file.icon.FileIconSetFactory;
+import org.xandercat.swing.label.VersionLabel;
 import org.xandercat.swing.laf.LookAndFeelSelectionDialog;
 import org.xandercat.swing.menu.RecentlyLoadedActionEvent;
 import org.xandercat.swing.menu.RecentlyLoadedActionListener;
@@ -161,7 +164,7 @@ public class CatBackFrame extends ApplicationFrame implements
 		// create file manager and recently loaded files manager
 		this.fileManager = new FileManager<CatBackup>(this, "catback", "Backup");
 		this.fileManager.setClassChecked(CatBackup.class);
-		this.fileManager.setImporter(new OldBackupImporter());
+		// note: not setting an Importer on the FileManager as it should be able to load backups from 1.3+ and prior versions are no longer to be supported
 		this.recentlyLoadedFilesManager = new RecentlyLoadedFilesManager(settings.getRecentlyLoadedFiles(), CatBackSettings.MAX_RECENTLY_LOADED_FILES);
 		this.recentlyLoadedFilesManager.addRecentlyLoadedActionListener(this);
 		this.fileManager.setRecentlyLoadedFilesManager(this.recentlyLoadedFilesManager);
@@ -170,8 +173,11 @@ public class CatBackFrame extends ApplicationFrame implements
 		
 		// create About dialog
 		ImageIcon aboutImageIcon = new ImageIcon(Images.getImage(Images.CATBACK));
-		URL aboutHtmlURL = getClass().getResource("catback.html");
-		this.aboutDialog = new AboutDialog(this, aboutImageIcon, aboutHtmlURL);
+		File aboutMarkdownFile = new File("RELEASE_NOTES.md");
+		this.aboutDialog = new AboutDialog(this);
+		this.aboutDialog.setImageIcon(aboutImageIcon);
+		this.aboutDialog.addMarkdownContent(aboutMarkdownFile);
+		this.aboutDialog.build();
 		
 		// create icon cache
 		FileIconSet fileIconSet = FileIconSetFactory.buildIconSet(FileIconSetFactory.GLAZE);
@@ -194,16 +200,16 @@ public class CatBackFrame extends ApplicationFrame implements
 		cbpHandler.setNavForwardText("Configure");
 		cbpHandler.setNavBackAvailable(false);
 		this.catBackPanelHandlers.add(cbpHandler);
-		cbpHandler = new CatBackPanelHandler(new NameLocationPanel());
-		cbpHandler.setNavBackAvailable(false);
-		this.catBackPanelHandlers.add(cbpHandler);
-		cbpHandler = new CatBackPanelHandler(new SettingsPanel());
-		this.catBackPanelHandlers.add(cbpHandler);
-		cbpHandler = new CatBackPanelHandler(new CheckboxFileTreePanel(CheckboxFileTreePanel.INCLUDED));
-		this.catBackPanelHandlers.add(cbpHandler);
-		cbpHandler = new CatBackPanelHandler(new CheckboxFileTreePanel(CheckboxFileTreePanel.EXCLUDED));
-		cbpHandler.setNavForwardText("Summary");
-		this.catBackPanelHandlers.add(cbpHandler);
+//		cbpHandler = new CatBackPanelHandler(new NameLocationPanel());
+//		cbpHandler.setNavBackAvailable(false);
+//		this.catBackPanelHandlers.add(cbpHandler);
+//		cbpHandler = new CatBackPanelHandler(new SettingsPanel());
+//		this.catBackPanelHandlers.add(cbpHandler);
+//		cbpHandler = new CatBackPanelHandler(new CheckboxFileTreePanel(CheckboxFileTreePanel.INCLUDED));
+//		this.catBackPanelHandlers.add(cbpHandler);
+//		cbpHandler = new CatBackPanelHandler(new CheckboxFileTreePanel(CheckboxFileTreePanel.EXCLUDED));
+//		cbpHandler.setNavForwardText("Summary");
+//		this.catBackPanelHandlers.add(cbpHandler);
 		
 		// create UI components for this window
 		this.catBackPanelList = new JList(this.catBackPanelHandlers.toArray());
@@ -256,7 +262,7 @@ public class CatBackFrame extends ApplicationFrame implements
 		this.listPanel.add(this.catBackPanelList, BorderLayout.CENTER);
 		JPanel versionPanel = new JPanel(new BorderLayout());
 		versionPanel.setOpaque(false);
-		versionPanel.add(new VersionLabel(getVersionHistory()), BorderLayout.EAST);
+		versionPanel.add(new VersionLabel(this), BorderLayout.EAST);
 		this.listPanel.add(versionPanel, BorderLayout.SOUTH);
 		JScrollPane scrollPane = new JScrollPane(listPanel);
 		scrollPane.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
@@ -390,8 +396,8 @@ public class CatBackFrame extends ApplicationFrame implements
 		item = new JMenuItem("Backup History");
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				BackupHistoryDialog dialog = new BackupHistoryDialog(CatBackFrame.this, backupStats);
-				dialog.showDialog();
+//				BackupHistoryDialog dialog = new BackupHistoryDialog(CatBackFrame.this, backupStats);
+//				dialog.showDialog();
 			}
 		});
 		fileManager.activateOnFileOpen(item);
