@@ -60,6 +60,7 @@ import org.xandercat.swing.file.SaveOnCloseObjectFinalizer;
 import org.xandercat.swing.file.icon.FileIconCache;
 import org.xandercat.swing.file.icon.FileIconSet;
 import org.xandercat.swing.file.icon.FileIconSetFactory;
+import org.xandercat.swing.laf.LookAndFeelSelectionDialog;
 import org.xandercat.swing.menu.RecentlyLoadedActionEvent;
 import org.xandercat.swing.menu.RecentlyLoadedActionListener;
 import org.xandercat.swing.menu.RecentlyLoadedFilesManager;

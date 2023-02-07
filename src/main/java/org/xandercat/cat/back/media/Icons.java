@@ -9,10 +9,10 @@ import javax.swing.ImageIcon;
  */
 public class Icons {
 
-//	public static final ImageIcon CANCEL_ICON = new ImageIcon(Icons.class.getResource("icon/Cancel-16x16.png"));
-//	public static final ImageIcon OVERWRITE_ICON = new ImageIcon(Icons.class.getResource("icon/next-16x16.png"));
-//	public static final ImageIcon RETRY_ICON = new ImageIcon(Icons.class.getResource("icon/next-16x16.png"));
-//	public static final ImageIcon INFO_ICON = new ImageIcon(Icons.class.getResource("icon/Info-16x16.png"));
+	public static final ImageIcon CANCEL_ICON = new ImageIcon(Icons.class.getResource("icon/Cancel-16x16.png"));
+	public static final ImageIcon OVERWRITE_ICON = new ImageIcon(Icons.class.getResource("icon/next-16x16.png"));
+	public static final ImageIcon RETRY_ICON = new ImageIcon(Icons.class.getResource("icon/next-16x16.png"));
+	public static final ImageIcon INFO_ICON = new ImageIcon(Icons.class.getResource("icon/Info-16x16.png"));
 //	public static final ImageIcon FIND_ICON = new ImageIcon(Icons.class.getResource("icon/Find-16x16.png"));
 //	public static final ImageIcon ADD_ICON = new ImageIcon(Icons.class.getResource("icon/add-16x16.png"));
 //	public static final ImageIcon REMOVE_ICON = new ImageIcon(Icons.class.getResource("icon/remove-16x16.png"));

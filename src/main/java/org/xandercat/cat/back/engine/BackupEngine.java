@@ -25,6 +25,7 @@ import org.xandercat.cat.back.engine.worklet.LoadBackupFiles;
 import org.xandercat.cat.back.engine.worklet.LoadCurrentFiles;
 import org.xandercat.cat.back.engine.worklet.MoveFiles;
 import org.xandercat.cat.back.file.BackupFile;
+import org.xandercat.cat.back.file.BackupPathGenerator;
 import org.xandercat.cat.back.file.FileListData;
 import org.xandercat.swing.app.ApplicationFrame;
 import org.xandercat.swing.app.CloseListener;
