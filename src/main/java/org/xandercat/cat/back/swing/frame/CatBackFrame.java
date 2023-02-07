@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,10 +45,14 @@ import org.xandercat.cat.back.engine.BackupEngineManager;
 import org.xandercat.cat.back.engine.BackupStats;
 import org.xandercat.cat.back.media.Icons;
 import org.xandercat.cat.back.media.Images;
+import org.xandercat.cat.back.swing.dialog.BackupHistoryDialog;
 import org.xandercat.cat.back.swing.panel.BackupResources;
 import org.xandercat.cat.back.swing.panel.CatBackPanelHandler;
 import org.xandercat.cat.back.swing.panel.CatBackPanelHandlerListCellRenderer;
+import org.xandercat.cat.back.swing.panel.CheckboxFileTreePanel;
 import org.xandercat.cat.back.swing.panel.EmptyPanel;
+import org.xandercat.cat.back.swing.panel.NameLocationPanel;
+import org.xandercat.cat.back.swing.panel.SettingsPanel;
 import org.xandercat.cat.back.swing.panel.SummaryPanel;
 import org.xandercat.cat.back.swing.tree.CatBackFileTreeCellRenderer;
 import org.xandercat.swing.app.ApplicationFrame;
@@ -200,16 +203,16 @@ public class CatBackFrame extends ApplicationFrame implements
 		cbpHandler.setNavForwardText("Configure");
 		cbpHandler.setNavBackAvailable(false);
 		this.catBackPanelHandlers.add(cbpHandler);
-//		cbpHandler = new CatBackPanelHandler(new NameLocationPanel());
-//		cbpHandler.setNavBackAvailable(false);
-//		this.catBackPanelHandlers.add(cbpHandler);
-//		cbpHandler = new CatBackPanelHandler(new SettingsPanel());
-//		this.catBackPanelHandlers.add(cbpHandler);
-//		cbpHandler = new CatBackPanelHandler(new CheckboxFileTreePanel(CheckboxFileTreePanel.INCLUDED));
-//		this.catBackPanelHandlers.add(cbpHandler);
-//		cbpHandler = new CatBackPanelHandler(new CheckboxFileTreePanel(CheckboxFileTreePanel.EXCLUDED));
-//		cbpHandler.setNavForwardText("Summary");
-//		this.catBackPanelHandlers.add(cbpHandler);
+		cbpHandler = new CatBackPanelHandler(new NameLocationPanel());
+		cbpHandler.setNavBackAvailable(false);
+		this.catBackPanelHandlers.add(cbpHandler);
+		cbpHandler = new CatBackPanelHandler(new SettingsPanel());
+		this.catBackPanelHandlers.add(cbpHandler);
+		cbpHandler = new CatBackPanelHandler(new CheckboxFileTreePanel(CheckboxFileTreePanel.INCLUDED));
+		this.catBackPanelHandlers.add(cbpHandler);
+		cbpHandler = new CatBackPanelHandler(new CheckboxFileTreePanel(CheckboxFileTreePanel.EXCLUDED));
+		cbpHandler.setNavForwardText("Summary");
+		this.catBackPanelHandlers.add(cbpHandler);
 		
 		// create UI components for this window
 		this.catBackPanelList = new JList(this.catBackPanelHandlers.toArray());
@@ -396,8 +399,8 @@ public class CatBackFrame extends ApplicationFrame implements
 		item = new JMenuItem("Backup History");
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-//				BackupHistoryDialog dialog = new BackupHistoryDialog(CatBackFrame.this, backupStats);
-//				dialog.showDialog();
+				BackupHistoryDialog dialog = new BackupHistoryDialog(CatBackFrame.this, backupStats);
+				dialog.showDialog();
 			}
 		});
 		fileManager.activateOnFileOpen(item);

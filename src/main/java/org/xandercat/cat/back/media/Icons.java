@@ -17,12 +17,11 @@ public class Icons {
 //	public static final ImageIcon ADD_ICON = new ImageIcon(Icons.class.getResource("icon/add-16x16.png"));
 //	public static final ImageIcon REMOVE_ICON = new ImageIcon(Icons.class.getResource("icon/remove-16x16.png"));
 	public static final ImageIcon CATBACK_ICON = new ImageIcon(Icons.class.getResource("icon/catback_icon_16x16b.png"));
-//	public static final ImageIcon CATSCAN_ICON = new ImageIcon(Icons.class.getResource("icon/catscan-16x16.png"));
-//	public static final ImageIcon SETTINGS_ICON = new ImageIcon(Icons.class.getResource("icon/settings-24x24.png"));
+	public static final ImageIcon SETTINGS_ICON = new ImageIcon(Icons.class.getResource("icon/settings-24x24.png"));
 	public static final ImageIcon SUMMARY_ICON = new ImageIcon(Icons.class.getResource("icon/summary-24x24.png"));
-//	public static final ImageIcon HDD_ICON = new ImageIcon(Icons.class.getResource("icon/hdd-24x24.png"));
-//	public static final ImageIcon FOLDER_BLUE_ICON = new ImageIcon(Icons.class.getResource("icon/folder-blue-24x24.png"));
-//	public static final ImageIcon FOLDER_RED_ICON = new ImageIcon(Icons.class.getResource("icon/folder-red-24x24.png"));
+	public static final ImageIcon HDD_ICON = new ImageIcon(Icons.class.getResource("icon/hdd-24x24.png"));
+	public static final ImageIcon FOLDER_BLUE_ICON = new ImageIcon(Icons.class.getResource("icon/folder-blue-24x24.png"));
+	public static final ImageIcon FOLDER_RED_ICON = new ImageIcon(Icons.class.getResource("icon/folder-red-24x24.png"));
 	public static final ImageIcon NEXT_ICON = new ImageIcon(Icons.class.getResource("icon/arrow-right-32x32.png"));
 	public static final ImageIcon PREVIOUS_ICON = new ImageIcon(Icons.class.getResource("icon/arrow-left-32x32.png"));	
 //	public static final ImageIcon CHECKED_ICON = new ImageIcon(Icons.class.getResource("icon/accept-icon-16x16.png"));
