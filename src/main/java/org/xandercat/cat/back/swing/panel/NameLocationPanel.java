@@ -18,7 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.xandercat.cat.back.CatBackup;
+import org.xandercat.cat.back.CatBackup15;
 import org.xandercat.cat.back.engine.BackupEngineListener;
 import org.xandercat.cat.back.engine.BackupEngineManager;
 import org.xandercat.cat.back.media.Icons;
@@ -156,7 +156,7 @@ public class NameLocationPanel implements CatBackPanel, ActionListener, FileTabl
 
 	@Override
 	public List<String> backupOpened(BackupResources backupResources) throws ZenputException {
-		CatBackup backup = backupResources.getFileManager().getObject();
+		CatBackup15 backup = backupResources.getFileManager().getObject();
 		InputProcessor inputProcessor = backupResources.getInputProcessor();
 		inputProcessor.registerInput("name", this.backupNameField);
 		InputAccessor<String> locationAccessor = new ReflectionAccessor<String>(this.backupLocationField, "absolutePath", String.class);

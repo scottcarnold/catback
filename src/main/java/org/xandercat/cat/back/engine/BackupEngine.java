@@ -16,7 +16,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.xandercat.cat.back.CatBackup;
+import org.xandercat.cat.back.CatBackup15;
 import org.xandercat.cat.back.engine.worklet.ApplyIncrementalBackupLimits;
 import org.xandercat.cat.back.engine.worklet.BackupEngineWorklet;
 import org.xandercat.cat.back.engine.worklet.CompareFiles;
@@ -78,7 +78,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 	private long backupSize;  // used to hold size of backup to be saved in backup stat when done
 	
 	public BackupEngine(ApplicationFrame parent, 
-			CatBackup backup, 
+			CatBackup15 backup, 
 			FileIconCache fileIconCache, 
 			CheckboxFileTree excludedTree,
 			BackupStats stats) {

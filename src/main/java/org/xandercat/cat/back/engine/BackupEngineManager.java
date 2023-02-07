@@ -7,7 +7,7 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 
-import org.xandercat.cat.back.CatBackup;
+import org.xandercat.cat.back.CatBackup15;
 import org.xandercat.cat.back.swing.frame.CatBackFrame;
 import org.xandercat.swing.file.FileManager;
 import org.xandercat.swing.file.FileManagerListener;
@@ -24,7 +24,7 @@ import org.xandercat.swing.zenput.util.ValidationDialogUtil;
  * 
  * @author Scott Arnold
  */
-public class BackupEngineManager implements FileManagerListener<CatBackup>{
+public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 
 	/**
 	 * Action for beginning the backup process.  Action is enabled if a backup is open and valid
@@ -42,7 +42,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup>{
 		}
 		
 		private void updateEnabled() {
-			CatBackup backup = backupFileManager.getObject();
+			CatBackup15 backup = backupFileManager.getObject();
 			setEnabled(backup != null 
 					&& inputProcessor != null 
 					&& !executingBackupIDs.contains(backup.getId()));
@@ -50,7 +50,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup>{
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			CatBackup backup = backupFileManager.getObject();
+			CatBackup15 backup = backupFileManager.getObject();
 			List<ValidationException> validationExceptions = inputProcessor.getErrors();
 			if (validationExceptions == null || validationExceptions.size() == 0) {
 				executingBackupIDs.add(backup.getId());
@@ -79,14 +79,14 @@ public class BackupEngineManager implements FileManagerListener<CatBackup>{
 	}
 	
 	private final CatBackFrame catBackFrame;
-	private final FileManager<CatBackup> backupFileManager;
+	private final FileManager<CatBackup15> backupFileManager;
 	private final Set<String> executingBackupIDs = new HashSet<String>();
 	private InputProcessor inputProcessor;
 	private BackupStats stats;
 	private BeginBackupAction beginBackupAction;
 	private final Set<BackupEngineListener> backupEngineListeners = new HashSet<BackupEngineListener>();
 	
-	public BackupEngineManager(CatBackFrame catBackFrame, FileManager<CatBackup> backupFileManager) {
+	public BackupEngineManager(CatBackFrame catBackFrame, FileManager<CatBackup15> backupFileManager) {
 		this.catBackFrame = catBackFrame;
 		this.backupFileManager = backupFileManager;
 		this.backupFileManager.addFileManagerListener(this);
@@ -134,7 +134,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup>{
 	}
 
 	@Override
-	public void beforeSaveOrClose(CatBackup toSave) {
+	public void beforeSaveOrClose(CatBackup15 toSave) {
 		// no action required	
 	}
 

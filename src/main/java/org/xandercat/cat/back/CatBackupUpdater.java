@@ -16,11 +16,11 @@ import org.xandercat.swing.tree.CheckboxFileTreeListener;
  */
 public class CatBackupUpdater implements CheckboxFileTreeListener {
 
-	private CatBackup backup;
+	private CatBackup15 backup;
 	private CheckboxFileTree includedFilesTree;
 	private CheckboxFileTree excludedFilesTree;
 	
-	public CatBackupUpdater(CatBackup backup, CheckboxFileTree includedFilesTree, CheckboxFileTree excludedFilesTree) {
+	public CatBackupUpdater(CatBackup15 backup, CheckboxFileTree includedFilesTree, CheckboxFileTree excludedFilesTree) {
 		this.backup = backup;
 		this.includedFilesTree = includedFilesTree;
 		this.excludedFilesTree = excludedFilesTree;

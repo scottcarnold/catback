@@ -32,3 +32,4 @@ hs_err_pid*
 # CatBack files as a convenience
 catback_settings.dat
 catback_trees.dat
+filemanager.dat

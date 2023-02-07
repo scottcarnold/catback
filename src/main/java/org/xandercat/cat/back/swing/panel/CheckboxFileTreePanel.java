@@ -17,7 +17,7 @@ import javax.swing.tree.TreePath;
 
 import org.xandercat.cat.back.BackupSizeCalculator;
 import org.xandercat.cat.back.BackupSizeListener;
-import org.xandercat.cat.back.CatBackup;
+import org.xandercat.cat.back.CatBackup15;
 import org.xandercat.cat.back.media.Icons;
 import org.xandercat.cat.back.swing.tree.CheckboxFileTreeChangeAction;
 import org.xandercat.swing.component.ComponentFactory;
@@ -50,7 +50,7 @@ public class CheckboxFileTreePanel implements CatBackPanel, BackupSizeListener, 
 	private CheckboxFileTree excludedTree;
 	private Type type;
 	private RotatingIconLabel sizeLabel;
-	private CatBackup backup;
+	private CatBackup15 backup;
 	
 	public CheckboxFileTreePanel(Type type) {
 		this.type = type;

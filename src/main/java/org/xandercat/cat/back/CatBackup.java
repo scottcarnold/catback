@@ -8,97 +8,49 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.xandercat.cat.back.swing.zenput.annotation.ValidateTimeDuration;
-import org.xandercat.swing.datetime.TimeDuration;
-import org.xandercat.swing.file.BinaryPrefix;
-import org.xandercat.swing.file.ByteSize;
-import org.xandercat.swing.util.FileUtil;
-import org.xandercat.swing.zenput.annotation.ConditionEquals;
-import org.xandercat.swing.zenput.annotation.InputField;
-import org.xandercat.swing.zenput.annotation.ValidateConditional;
-import org.xandercat.swing.zenput.annotation.ValidateFile;
-import org.xandercat.swing.zenput.annotation.ValidateFile.Mode;
-import org.xandercat.swing.zenput.annotation.ValidateInteger;
-import org.xandercat.swing.zenput.annotation.ValidateRequired;
+import org.xandercat.common.util.ByteSize;
+import org.xandercat.common.util.TimeDuration;
+import org.xandercat.common.util.file.FileUtil;
 
 /**
  * Class for storing all information about a backup.  This class represents the files
  * managed by the CatBack application.
  * 
- * To make it easier to support loading old backups on newer versions of CatBack, from 
- * version 1.5 onward, the lowest compatible version will be appended to the backup file name
- * (if 1.6 were released with no changes to the backup class, the new version may continue
- * to use CatBackup15; if breaking changes are introduced, a new class CatBackup16 would be
- * created.)
+ * This class is for version 1.3/1.4 of CatBack.  It exists here to support upgrading 
+ * backups from the older versions.  For CatBack 1.5, the replacement class is CatBackup15.
  * 
  * @author Scott Arnold
  */
-public class CatBackup15 implements Serializable {
+public class CatBackup implements Serializable {
 	
-	private static final long serialVersionUID = 2023020601L;
+	private static final long serialVersionUID = 2010081301L;
 	
 	private String id;
 	
-	@InputField(title="Backup Name")
-	@ValidateRequired
 	private String name;
-	
-	@InputField(title="Backup Directory")
-	@ValidateRequired
-	@ValidateFile(mode=Mode.DIRECTORIES_ONLY, exists=true)
 	private File backupDirectory;
-	
 	private List<File> includedFiles = new ArrayList<File>();			// list of all files, including directories
 	private List<File> includedDirectories = new ArrayList<File>();		// list of directories only
 	private List<File> excludedFiles = new ArrayList<File>();			// list of all excluded files, including directories
 	private List<File> excludedDirectories = new ArrayList<File>();		// list of excluded directories only
-	
-	@InputField(title="Show Files Before Move/Copy")
 	private boolean showFilesBeforeMoveCopy;
-	
-	@InputField(title="Always Leave Copy Window Open")
 	private boolean alwaysLeaveCopyWindowOpen;
-	
-	@InputField(title="Limit Incremental Backups")
 	private boolean limitIncrementalBackups;
-	
-	@InputField(title="Keep For At Least (Time)")
-	@ValidateConditional(dependentOn="limitIncrementalBackups")
-	@ConditionEquals(valueType=Boolean.class, stringValue="true")
-	@ValidateRequired
-	@ValidateTimeDuration
 	private TimeDuration keepAtLeastTime;
-	
-	@InputField(title="Keep No More Than (Time)")
-	@ValidateConditional(dependentOn="limitIncrementalBackups")
-	@ConditionEquals(valueType=Boolean.class, stringValue="true")
-	@ValidateRequired
-	@ValidateTimeDuration
 	private TimeDuration keepNoMoreThanTime;
-	
-	@InputField(title="Keep No More Than (Size)")
-	@ValidateConditional(dependentOn="limitIncrementalBackups")
-	@ConditionEquals(valueType=Boolean.class, stringValue="true")
-	@ValidateRequired
 	private ByteSize keepNoMoreThanBytes;
-	
-	@InputField(title="Perform Full Scan of Previous Backup")
 	private boolean scanLastBackup;
-	
-	@InputField(title="Errors Until Backup Halt")
-	@ValidateInteger(min=1)
-	@ValidateRequired
 	private Integer errorsUntilBackupHalt = Integer.valueOf(10);
 	
-	public CatBackup15() {
+	public CatBackup() {
 		this(UUID.randomUUID().toString());	
 	}
 	
-	public CatBackup15(String id) {
+	public CatBackup(String id) {
 		this.id = id;
 		this.keepAtLeastTime = new TimeDuration(1, TimeDuration.Unit.MONTH);
 		this.keepNoMoreThanTime = new TimeDuration(1, TimeDuration.Unit.YEAR);
-		this.keepNoMoreThanBytes = new ByteSize(25, BinaryPrefix.GiB);		
+		this.keepNoMoreThanBytes = new ByteSize(25, FileUtil.BinaryPrefix.GiB);		
 	}
 	
 	public String getId() {

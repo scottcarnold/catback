@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 
 import org.xandercat.cat.back.BackupSizeCalculator;
 import org.xandercat.cat.back.BackupSizeListener;
-import org.xandercat.cat.back.CatBackup;
+import org.xandercat.cat.back.CatBackup15;
 import org.xandercat.cat.back.engine.BackupEngineManager;
 import org.xandercat.cat.back.engine.BackupStat;
 import org.xandercat.cat.back.engine.BackupStats;
@@ -46,11 +46,11 @@ import org.xandercat.swing.zenput.util.ValidationDialogUtil;
  * 
  * @author Scott Arnold
  */
-public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManagerListener<CatBackup>, ActionListener {
+public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManagerListener<CatBackup15>, ActionListener {
 
 	private CatBackFrame catBackFrame;
 	private JPanel panel;
-	private CatBackup backup;
+	private CatBackup15 backup;
 	private JLabel backupNameLabel;
 	private FileLabel catBackupFileLabel;
 	private FileLabel backupLocationLabel;
@@ -69,7 +69,7 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 	private List<ValidationException> validationExceptions;
 	private BackupStats backupStats;
 	
-	public SummaryPanel(CatBackFrame catBackFrame, FileManager<CatBackup> fileManager) {
+	public SummaryPanel(CatBackFrame catBackFrame, FileManager<CatBackup15> fileManager) {
 		this.catBackFrame = catBackFrame;
 		this.backupNameLabel = new JLabel();
 		this.catBackupFileLabel = new FileLabel(false);
@@ -138,7 +138,7 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 
 	@Override
 	public List<String> backupOpened(BackupResources backupResources) throws ZenputException {
-		FileManager<CatBackup> fileManager = backupResources.getFileManager();
+		FileManager<CatBackup15> fileManager = backupResources.getFileManager();
 		this.backup = fileManager.getObject();
 		this.backupStats = backupResources.getBackupStats();
 		this.inputProcessor = backupResources.getInputProcessor();
@@ -275,7 +275,7 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 	}
 
 	@Override
-	public void beforeSaveOrClose(CatBackup toSave) {
+	public void beforeSaveOrClose(CatBackup15 toSave) {
 		// no action required
 	}
 
