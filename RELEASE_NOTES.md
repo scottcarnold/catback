@@ -18,6 +18,7 @@ Planned Release 2/14/2023
 ## CatBack 1.5
 + Refactoring and removal of old code
 + Updated from Log4J to Log4J2
++ Due to the Log4J changes, the behavior of logging had to be revised. If you change the logging configuration with the -l flag, the changes will not take effect until the application is restarted.  In addition, if you set logging to "window", the logging window will now be opened via a menu item in the Window drop down menu.
 + Minor bug fixes
 + About dialog updated to use RELEASE_NOTES.md for content
 
