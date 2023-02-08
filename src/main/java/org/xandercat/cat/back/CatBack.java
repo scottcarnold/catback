@@ -7,10 +7,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xandercat.cat.back.swing.frame.CatBackFrame;
 import org.xandercat.swing.file.FileManager;
+import org.xandercat.swing.log.LoggingConfigurer;
 import org.xandercat.swing.util.ArgumentProcessor;
 //import org.xandercat.cat.back.ui.ImmediateFileBackupFrame;
 //import org.xandercat.common.util.ArgumentProcessor;
@@ -39,7 +41,6 @@ public class CatBack {
 	
 	public static final String LOG_KEY = "-l";
 	public static final String IMMEDIATE_BACKUP_KEY = "-b";
-	public static final String FILES_SIZE_MONITOR_KEY = "-monitor";
 	
 	private static final Logger log = LogManager.getLogger(CatBack.class);
 	
@@ -48,12 +49,11 @@ public class CatBack {
 		// process command-line arguments
 		ArgumentProcessor argumentProcessor = new ArgumentProcessor();
 		argumentProcessor.addValidSwitchValuePair(IMMEDIATE_BACKUP_KEY, "<filename>", "Backup the given Backup Profile", null);
-//		LoggingUtil.addArgumentProcessorSwitchValuePair(argumentProcessor, LOG_KEY);
+		LoggingConfigurer.addArgumentProcessorSwitchValuePair(argumentProcessor, LOG_KEY);
 		argumentProcessor.process(args);
-//		Properties defaultProperties = LoggingUtil.getBasicFileLoggingProperties(
-//				"catback.log", Level.INFO, "CAT", "org.xandercat");
-//		LoggingUtil.configureLogging(argumentProcessor, LOG_KEY, LoggingUtil.PROPERTIES, defaultProperties);
-//		log.debug("Logging configured.");
+		if (LoggingConfigurer.configureLogging(argumentProcessor, LOG_KEY, Level.INFO, LoggingConfigurer.Target.FILE, "catback.log")) {
+			log.info("Logging configuration updated.  Application will need to be restarted for changes to take effect.");
+		} 
 		PlatformTool.setApplicationNameOnMac(APPLICATION_NAME);
 		final String backupFilename = argumentProcessor.getValueForSwitch(IMMEDIATE_BACKUP_KEY);
 

@@ -19,6 +19,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -68,6 +69,8 @@ import org.xandercat.swing.file.icon.FileIconSet;
 import org.xandercat.swing.file.icon.FileIconSetFactory;
 import org.xandercat.swing.label.VersionLabel;
 import org.xandercat.swing.laf.LookAndFeelSelectionDialog;
+import org.xandercat.swing.log.LogFrame;
+import org.xandercat.swing.log.LoggingConfigurer;
 import org.xandercat.swing.menu.RecentlyLoadedActionEvent;
 import org.xandercat.swing.menu.RecentlyLoadedActionListener;
 import org.xandercat.swing.menu.RecentlyLoadedFilesManager;
@@ -406,6 +409,12 @@ public class CatBackFrame extends ApplicationFrame implements
 			}
 		});
 		fileManager.activateOnFileOpen(item);
+		menu.add(item);
+		JFrame logFrame = LoggingConfigurer.getLogFrame();
+		if (logFrame != null) {
+			item = new JMenuItem("Application Log");
+			item.addActionListener(event -> logFrame.setVisible(true));
+		}
 		menu.add(item);
 		menuBar.add(menu);
 		menu = new JMenu("Help");
