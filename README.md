@@ -1,4 +1,4 @@
-#CatBack
+# CatBack
 
 CatBack is a simple system back utility.  It allows for selecting included and excluded files and folders and supports incremental backups.  Backed up files and folders are copied as is, without encryption or compression.
 
