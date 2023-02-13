@@ -172,7 +172,6 @@ public class CatBackFrame extends ApplicationFrame implements
 		this.fileManager = new FileManager<CatBackup15>(this, "catback", "Backup");
 		this.fileManager.setClassChecked(CatBackup15.class);
 		this.fileManager.setImporter(new OldBackupImporter());
-		// note: not setting an Importer on the FileManager as it should be able to load backups from 1.3+ and prior versions are no longer to be supported
 		this.recentlyLoadedFilesManager = new RecentlyLoadedFilesManager(settings.getRecentlyLoadedFiles(), CatBackSettings.MAX_RECENTLY_LOADED_FILES);
 		this.recentlyLoadedFilesManager.addRecentlyLoadedActionListener(this);
 		this.fileManager.setRecentlyLoadedFilesManager(this.recentlyLoadedFilesManager);
@@ -659,7 +658,7 @@ public class CatBackFrame extends ApplicationFrame implements
 	}
 
 	public CheckboxFileTree getExcludedFileTree() {
-		//TODO:  Consider how this refactor this -- maybe store the excluded tree in the ResourceManager?
+		//TODO:  Consider how to refactor this -- maybe store the excluded tree in the ResourceManager?
 		// excludedtree is needed in several places throughout the application
 		return this.excludedTree;
 	}
