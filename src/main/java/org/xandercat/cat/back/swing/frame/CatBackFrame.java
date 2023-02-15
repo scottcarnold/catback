@@ -86,6 +86,7 @@ import org.xandercat.swing.zenput.error.ZenputException;
 import org.xandercat.swing.zenput.marker.BackgroundMarker;
 import org.xandercat.swing.zenput.marker.CompoundMarker;
 import org.xandercat.swing.zenput.marker.ForegroundMarker;
+import org.xandercat.swing.zenput.marker.MarkerFactory;
 import org.xandercat.swing.zenput.marker.ToolTipMarker;
 import org.xandercat.swing.zenput.processor.CommitMode;
 import org.xandercat.swing.zenput.processor.InputProcessor;
@@ -541,12 +542,11 @@ public class CatBackFrame extends ApplicationFrame implements
 		// setup input processor for backup inputs
 		Processor sourceProcessor = new SourceProcessor(backup);
 		this.inputProcessor = new InputProcessor(sourceProcessor, CommitMode.COMMIT_ALL, true);
-		@SuppressWarnings("unchecked")
-		CompoundMarker<JComponent> bgMarker = new CompoundMarker<JComponent>(
-				new BackgroundMarker(), new ToolTipMarker());
-		this.inputProcessor.setDefaultMarkerBuilder(JTextField.class, bgMarker);
+		this.inputProcessor.setDefaultMarkerBuilder(JTextField.class, MarkerFactory.compoundMarkerBuilder(
+				MarkerFactory.backgroundMarkerBuilder(),
+				MarkerFactory.toolTipMarkerBuilder()));
 		// note: we don't want tool tip marking for labels as it would conflict with the standard FileLabel tool tips
-		this.inputProcessor.setDefaultMarkerBuilder(JLabel.class, new ForegroundMarker());
+		this.inputProcessor.setDefaultMarkerBuilder(JLabel.class, MarkerFactory.foregroundMarkerBuilder());
 		
 		// setup backup stats
 		try {
