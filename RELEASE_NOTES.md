@@ -10,15 +10,16 @@ CatBack is a simple system back utility.
 + Java Version: 1.8
 
 # CatBack 1.5 Release Notes
-Planned Release 2/14/2023
+Planned Release 3/31/2023
 ## Build
 + Updated to use Maven build system
-+ Updated Java version from 1.5 to 1.8
++ Updated Java version from 1.6 to 1.8
 
 ## CatBack 1.5
 + Refactoring and removal of old code
 + Updated from Log4J to Log4J2
 + Due to the Log4J changes, the behavior of logging had to be revised. If you change the logging configuration with the -l flag, the changes will not take effect until the application is restarted.  In addition, if you set logging to "window", the logging window will now be opened via a menu item in the Window drop down menu.
++ Removed directory size cache debugging window and associated command line flag
 + Minor bug fixes
 + About dialog updated to use RELEASE_NOTES.md for content
 
@@ -35,9 +36,11 @@ Released 8/1/2013
 
 # CatBack 1.3 Release Notes
 Released 5/12/2011
+## Build
++ Updated Java version from 1.5 to 1.6
+
 ## CatBack 1.3
 + Redesigned user interface.
-+ Updated to take advantage of Java 6 features (Java 6 is now required).
 + Improved row sorting in tables.
 + Added preference for setting the application Look and Feel.
 + Checkbox file trees now use check boxes and selection highlighting consistent with the active Look and Feel.

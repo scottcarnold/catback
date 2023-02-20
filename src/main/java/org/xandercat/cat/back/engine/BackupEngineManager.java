@@ -17,7 +17,7 @@ import org.xandercat.swing.util.ResourceManager;
 import org.xandercat.swing.worker.SwingWorkerUtil;
 import org.xandercat.swing.zenput.error.ValidationException;
 import org.xandercat.swing.zenput.processor.InputProcessor;
-import org.xandercat.swing.zenput.util.ValidationDialogUtil;
+import org.xandercat.swing.zenput.util.ValidationErrorUtil;
 
 /**
  * Manager for controlling the launch of backups.
@@ -64,7 +64,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 				}
 				SwingWorkerUtil.execute(backupEngine);
 			} else {
-				ValidationDialogUtil.showMessageDialog(catBackFrame, 
+				ValidationErrorUtil.showMessageDialog(catBackFrame, 
 						inputProcessor, 
 						validationExceptions,
 						"The following errors must be corrected before a backup can be started:");

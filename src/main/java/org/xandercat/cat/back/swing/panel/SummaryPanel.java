@@ -38,7 +38,7 @@ import org.xandercat.swing.util.ResourceManager;
 import org.xandercat.swing.zenput.error.ValidationException;
 import org.xandercat.swing.zenput.error.ZenputException;
 import org.xandercat.swing.zenput.processor.InputProcessor;
-import org.xandercat.swing.zenput.util.ValidationDialogUtil;
+import org.xandercat.swing.zenput.util.ValidationErrorUtil;
 
 /**
  * Summary panel for a backup.  Any time the backup is changed, the method update() should
@@ -289,7 +289,7 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 		if (e.getSource() == this.showValidationExceptionsButton 
 				&& inputProcessor != null
 				&& validationExceptions != null) {
-			ValidationDialogUtil.showMessageDialog(catBackFrame, 
+			ValidationErrorUtil.showMessageDialog(catBackFrame, 
 					inputProcessor, 
 					validationExceptions,
 					"The following errors must be corrected before a backup can be started:");

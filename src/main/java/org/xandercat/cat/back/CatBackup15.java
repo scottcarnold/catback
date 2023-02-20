@@ -13,9 +13,8 @@ import org.xandercat.swing.datetime.TimeDuration;
 import org.xandercat.swing.file.BinaryPrefix;
 import org.xandercat.swing.file.ByteSize;
 import org.xandercat.swing.util.FileUtil;
-import org.xandercat.swing.zenput.annotation.ConditionEquals;
+import org.xandercat.swing.zenput.annotation.ControlEquals;
 import org.xandercat.swing.zenput.annotation.InputField;
-import org.xandercat.swing.zenput.annotation.ValidateConditional;
 import org.xandercat.swing.zenput.annotation.ValidateFile;
 import org.xandercat.swing.zenput.annotation.ValidateFile.Mode;
 import org.xandercat.swing.zenput.annotation.ValidateInteger;
@@ -63,22 +62,19 @@ public class CatBackup15 implements Serializable {
 	private boolean limitIncrementalBackups;
 	
 	@InputField(title="Keep For At Least (Time)")
-	@ValidateConditional(dependentOn="limitIncrementalBackups")
-	@ConditionEquals(valueType=Boolean.class, stringValue="true")
+	@ControlEquals(dependencyOn="limitIncrementalBackups", valueType=Boolean.class, stringValue="true")
 	@ValidateRequired
 	@ValidateTimeDuration
 	private TimeDuration keepAtLeastTime;
 	
 	@InputField(title="Keep No More Than (Time)")
-	@ValidateConditional(dependentOn="limitIncrementalBackups")
-	@ConditionEquals(valueType=Boolean.class, stringValue="true")
+	@ControlEquals(dependencyOn="limitIncrementalBackups", valueType=Boolean.class, stringValue="true")
 	@ValidateRequired
 	@ValidateTimeDuration
 	private TimeDuration keepNoMoreThanTime;
 	
 	@InputField(title="Keep No More Than (Size)")
-	@ValidateConditional(dependentOn="limitIncrementalBackups")
-	@ConditionEquals(valueType=Boolean.class, stringValue="true")
+	@ControlEquals(dependencyOn="limitIncrementalBackups", valueType=Boolean.class, stringValue="true")
 	@ValidateRequired
 	private ByteSize keepNoMoreThanBytes;
 	
