@@ -57,6 +57,7 @@ import org.xandercat.cat.back.swing.panel.NameLocationPanel;
 import org.xandercat.cat.back.swing.panel.SettingsPanel;
 import org.xandercat.cat.back.swing.panel.SummaryPanel;
 import org.xandercat.cat.back.swing.tree.CatBackFileTreeCellRenderer;
+import org.xandercat.cat.back.swing.zenput.validator.TimeDurationValidator;
 import org.xandercat.swing.app.ApplicationFrame;
 import org.xandercat.swing.component.ButtonFactory;
 import org.xandercat.swing.dialog.AboutDialog;
@@ -547,6 +548,8 @@ public class CatBackFrame extends ApplicationFrame implements
 				MarkerFactory.toolTipMarkerBuilder()));
 		// note: we don't want tool tip marking for labels as it would conflict with the standard FileLabel tool tips
 		this.inputProcessor.setDefaultMarkerBuilder(JLabel.class, MarkerFactory.foregroundMarkerBuilder());
+		// add custom validator message properties to the default Zenput message properties
+		TimeDurationValidator.addMessageProperties(inputProcessor.getMessageProperties());
 		
 		// setup backup stats
 		try {
