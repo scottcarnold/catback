@@ -70,7 +70,6 @@ import org.xandercat.swing.file.icon.FileIconSet;
 import org.xandercat.swing.file.icon.FileIconSetFactory;
 import org.xandercat.swing.label.VersionLabel;
 import org.xandercat.swing.laf.LookAndFeelSelectionDialog;
-import org.xandercat.swing.log.LogFrame;
 import org.xandercat.swing.log.LoggingConfigurer;
 import org.xandercat.swing.menu.RecentlyLoadedActionEvent;
 import org.xandercat.swing.menu.RecentlyLoadedActionListener;
@@ -84,11 +83,7 @@ import org.xandercat.swing.tree.TreeState;
 import org.xandercat.swing.util.PlatformTool;
 import org.xandercat.swing.util.ResourceManager;
 import org.xandercat.swing.zenput.error.ZenputException;
-import org.xandercat.swing.zenput.marker.BackgroundMarker;
-import org.xandercat.swing.zenput.marker.CompoundMarker;
-import org.xandercat.swing.zenput.marker.ForegroundMarker;
 import org.xandercat.swing.zenput.marker.MarkerFactory;
-import org.xandercat.swing.zenput.marker.ToolTipMarker;
 import org.xandercat.swing.zenput.processor.CommitMode;
 import org.xandercat.swing.zenput.processor.InputProcessor;
 import org.xandercat.swing.zenput.processor.Processor;
@@ -131,7 +126,7 @@ public class CatBackFrame extends ApplicationFrame implements
 	private List<CatBackPanelHandler> catBackPanelHandlers;
 	
 	// UI components for this window
-	private JList catBackPanelList;
+	private JList<CatBackPanelHandler> catBackPanelList;
 	private DesignerPanel listPanel;
 	private JPanel mainPanel;
 	private JPanel catBackNavPanel;
@@ -221,7 +216,7 @@ public class CatBackFrame extends ApplicationFrame implements
 		this.catBackPanelHandlers.add(cbpHandler);
 		
 		// create UI components for this window
-		this.catBackPanelList = new JList(this.catBackPanelHandlers.toArray());
+		this.catBackPanelList = new JList<CatBackPanelHandler>((CatBackPanelHandler[]) this.catBackPanelHandlers.toArray());
 		this.catBackPanelList.setCellRenderer(new CatBackPanelHandlerListCellRenderer());
 		this.catBackPanelList.setEnabled(false);
 		this.catBackPanelList.setOpaque(false);
