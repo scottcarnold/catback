@@ -15,7 +15,7 @@ public class TimeDurationInputPanel extends JPanel implements MarkTargetProvider
 	private static final long serialVersionUID = 1L;
 
 	private JFormattedTextField valueTextField;
-	private JComboBox unitComboBox;
+	private JComboBox<TimeDuration.Unit> unitComboBox;
 	private Object[] markTargets = new Object[2];
 	
 	public TimeDurationInputPanel() {
@@ -28,7 +28,7 @@ public class TimeDurationInputPanel extends JPanel implements MarkTargetProvider
 		if (textFieldColumns > 0) {
 			this.valueTextField.setColumns(textFieldColumns);
 		}
-		this.unitComboBox = new JComboBox(TimeDuration.Unit.values());
+		this.unitComboBox = new JComboBox<TimeDuration.Unit>(TimeDuration.Unit.values());
 		add(this.valueTextField);
 		add(this.unitComboBox);
 		markTargets[0] = valueTextField;

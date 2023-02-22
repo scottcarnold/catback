@@ -14,8 +14,6 @@ import org.xandercat.cat.back.swing.frame.ImmediateFileBackupFrame;
 import org.xandercat.swing.file.FileManager;
 import org.xandercat.swing.log.LoggingConfigurer;
 import org.xandercat.swing.util.ArgumentProcessor;
-//import org.xandercat.cat.back.ui.ImmediateFileBackupFrame;
-//import org.xandercat.common.util.ArgumentProcessor;
 import org.xandercat.swing.util.PlatformTool;
 
 

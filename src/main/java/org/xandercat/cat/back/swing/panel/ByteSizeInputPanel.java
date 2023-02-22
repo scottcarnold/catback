@@ -16,7 +16,7 @@ public class ByteSizeInputPanel extends JPanel implements MarkTargetProvider {
 	private static final long serialVersionUID = 1L;
 
 	private JFormattedTextField valueTextField;
-	private JComboBox unitComboBox;
+	private JComboBox<BinaryPrefix> unitComboBox;
 	private Object[] markTargets = new Object[2];
 	
 	public ByteSizeInputPanel() {
@@ -29,7 +29,7 @@ public class ByteSizeInputPanel extends JPanel implements MarkTargetProvider {
 		if (textFieldColumns > 0) {
 			this.valueTextField.setColumns(textFieldColumns);
 		}
-		this.unitComboBox = new JComboBox(BinaryPrefix.values());
+		this.unitComboBox = new JComboBox<BinaryPrefix>(BinaryPrefix.values());
 		add(this.valueTextField);
 		add(this.unitComboBox);
 		markTargets[0] = valueTextField;

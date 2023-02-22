@@ -199,7 +199,7 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 		fileCopyProgressListeners.add(listener);
 	}
 	
-	public void removeFileCopyProgressListener(FileCopyListener listener) {
+	public void removeFileCopyProgressListener(FileCopyProgressListener listener) {
 		fileCopyProgressListeners.remove(listener);
 	}
 	
