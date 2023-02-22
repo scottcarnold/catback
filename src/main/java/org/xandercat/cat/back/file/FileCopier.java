@@ -148,9 +148,9 @@ public class FileCopier {
 		}
 		FileChannel in = null;
 		FileChannel out = null;
-		try {
-			in = new FileInputStream(inFile).getChannel();
-			out = new FileOutputStream(outFile).getChannel();
+		try(FileInputStream fin = new FileInputStream(inFile); FileOutputStream fout = new FileOutputStream(outFile)) {
+			in = fin.getChannel();
+			out = fout.getChannel();
 			if (progressListeners == null) {
 				long size = in.size();
 				long pos = 0;
@@ -209,9 +209,9 @@ public class FileCopier {
 		}
 		FileChannel in = null;
 		FileChannel out = null;
-		try {
-			in = new FileInputStream(inFile).getChannel();
-			out = new FileOutputStream(outFile).getChannel();
+		try(FileInputStream fin = new FileInputStream(inFile); FileOutputStream fout = new FileOutputStream(outFile)) {
+			in = fin.getChannel();
+			out = fout.getChannel();
 			if (progressListeners == null) {
 				long size = in.size();
 				long pos = 0;
