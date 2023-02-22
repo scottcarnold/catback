@@ -132,7 +132,6 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 		this.runQuiet = runQuiet;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected Void doInBackground() throws Exception {
 		

@@ -1,7 +1,6 @@
 package org.xandercat.cat.back;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -11,6 +10,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xandercat.cat.back.swing.frame.CatBackFrame;
+import org.xandercat.cat.back.swing.frame.ImmediateFileBackupFrame;
 import org.xandercat.swing.file.FileManager;
 import org.xandercat.swing.log.LoggingConfigurer;
 import org.xandercat.swing.util.ArgumentProcessor;
@@ -102,7 +102,7 @@ public class CatBack {
 				if (backupFilename == null) {
 					launchUI(settings);
 				} else {
-//					launchImmediateBackup(backupFilename);
+					launchImmediateBackup(backupFilename);
 				}
 			}
 		}); 
@@ -112,9 +112,9 @@ public class CatBack {
 		CatBackFrame ui = new CatBackFrame(APPLICATION_NAME, APPLICATION_VERSION, settings);
 		ui.setVisible(true);
 	}
-//	
-//	public static void launchImmediateBackup(String backupProfileFilename) {
-//		ImmediateFileBackupFrame ui = new ImmediateFileBackupFrame(backupProfileFilename);
-//		ui.setVisible(true);
-//	}
+	
+	public static void launchImmediateBackup(String backupProfileFilename) {
+		ImmediateFileBackupFrame ui = new ImmediateFileBackupFrame(APPLICATION_NAME, APPLICATION_VERSION, backupProfileFilename);
+		ui.setVisible(true);
+	}
 }
