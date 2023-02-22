@@ -1,6 +1,6 @@
 # CatBack
 
-CatBack is a simple system back utility.
+CatBack is a simple system backup utility.
 
 + Author: Scott C Arnold
 + Contributor: Cari R Bryant Arnold
@@ -22,6 +22,7 @@ Planned Release 3/31/2023
 + Removed directory size cache debugging window and associated command line flag
 + Minor bug fixes
 + About dialog updated to use RELEASE_NOTES.md for content
++ Updated to latest Zenput release
 
 # CatBack 1.4 Release Notes
 Released 8/1/2013

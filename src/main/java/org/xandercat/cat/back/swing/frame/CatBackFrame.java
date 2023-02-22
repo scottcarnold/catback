@@ -216,7 +216,7 @@ public class CatBackFrame extends ApplicationFrame implements
 		this.catBackPanelHandlers.add(cbpHandler);
 		
 		// create UI components for this window
-		this.catBackPanelList = new JList<CatBackPanelHandler>((CatBackPanelHandler[]) this.catBackPanelHandlers.toArray());
+		this.catBackPanelList = new JList(this.catBackPanelHandlers.toArray());
 		this.catBackPanelList.setCellRenderer(new CatBackPanelHandlerListCellRenderer());
 		this.catBackPanelList.setEnabled(false);
 		this.catBackPanelList.setOpaque(false);
