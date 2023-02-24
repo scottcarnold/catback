@@ -41,8 +41,8 @@ public class OldBackupImporter implements Importer<CatBackup15> {
 			backup.setAlwaysLeaveCopyWindowOpen(oldBackup.isAlwaysLeaveCopyWindowOpen());
 			backup.setBackupDirectory(oldBackup.getBackupDirectory());
 			backup.setErrorsUntilBackupHalt(oldBackup.getErrorsUntilBackupHalt());
-			backup.setExcludedFiles(oldBackup.getExcludedFiles());
-			backup.setIncludedFiles(oldBackup.getIncludedFiles());
+			backup.setExcludedFiles(oldBackup.getExcludedFiles(), oldBackup.getExcludedDirectories());
+			backup.setIncludedFiles(oldBackup.getIncludedFiles(), oldBackup.getIncludedDirectories());
 			backup.setKeepAtLeastTime(upgradeTimeDuration(oldBackup.getKeepAtLeastTime()));
 			backup.setKeepNoMoreThanBytes(upgradeByteSize(oldBackup.getKeepNoMoreThanBytes()));
 			backup.setKeepNoMoreThanTime(upgradeTimeDuration(oldBackup.getKeepNoMoreThanTime()));

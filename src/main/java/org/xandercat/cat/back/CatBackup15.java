@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -190,27 +191,19 @@ public class CatBackup15 implements Serializable {
 	}
 
 	public List<File> getIncludedFiles() {
-		List<File> filesCopy = new ArrayList<File>();
-		filesCopy.addAll(includedFiles);
-		return filesCopy;
+		return Collections.unmodifiableList(includedFiles);
 	}
 	
 	public List<File> getExcludedFiles() {
-		List<File> excludedFilesCopy = new ArrayList<File>();
-		excludedFilesCopy.addAll(excludedFiles);
-		return excludedFilesCopy;
+		return Collections.unmodifiableList(excludedFiles);
 	}
 	
 	public List<File> getIncludedDirectories() {
-		List<File> dirsCopy = new ArrayList<File>();
-		dirsCopy.addAll(includedDirectories);
-		return dirsCopy;
+		return Collections.unmodifiableList(includedDirectories);
 	}
 	
 	public List<File> getExcludedDirectories() {
-		List<File> dirsCopy = new ArrayList<File>();
-		dirsCopy.addAll(excludedDirectories);
-		return dirsCopy;
+		return Collections.unmodifiableList(excludedDirectories);
 	}
 	
 	public boolean wasDirectory(File file) {
@@ -223,24 +216,50 @@ public class CatBackup15 implements Serializable {
 		}
 	}
 	
-	public void setIncludedFiles(List<File> files) {
+	/**
+	 * Sets what files are included in this backup.  filesRepresentingDirectories should be a subset of files,
+	 * but this is not checked; not adhering to this rule could have unpredictable results.  filesRepresentingDirectories
+	 * can be left null, in which case each file will be tested to determine if it is a directory or not, though if
+	 * the file does not exist, it will simply assume it was not a directory.
+	 * 
+	 * @param files                           files included in the backup (can contain files and directories)
+	 * @param filesRepresentingDirectories    subset of files that represent directories (if provided, files will not have to be tested)
+	 */
+	public void setIncludedFiles(List<File> files, List<File> filesRepresentingDirectories) {
 		this.includedFiles.clear();
 		this.includedDirectories.clear();
 		this.includedFiles.addAll(files);
-		for (File file : this.includedFiles) {
-			if (file.isDirectory()) {
-				this.includedDirectories.add(file);
+		if (filesRepresentingDirectories != null) {
+			this.includedDirectories.addAll(filesRepresentingDirectories);
+		} else {
+			for (File file : this.includedFiles) {
+				if (file.isDirectory()) {
+					this.includedDirectories.add(file);
+				}
 			}
 		}
 	}
 	
-	public void setExcludedFiles(List<File> files) {
+	/**
+	 * Sets what files are marked excluded in this backup.  filesRepresentingDirectories should be a subset of files,
+	 * but this is not checked; not adhering to this rule could have unpredictable results.  filesRepresentingDirectories
+	 * can be left null, in which case each file will be tested to determine if it is a directory or not, though if
+	 * the file does not exist, it will simply assume it was not a directory.
+	 * 
+	 * @param files                           files excluded in the backup (can contain files and directories)
+	 * @param filesRepresentingDirectories    subset of files that represent directories (if provided, files will not have to be tested)
+	 */
+	public void setExcludedFiles(List<File> files, List<File> filesRepresentingDirectories) {
 		this.excludedFiles.clear();
 		this.excludedDirectories.clear();
 		this.excludedFiles.addAll(files);
-		for (File file : this.excludedFiles) {
-			if (file.isDirectory()) {
-				this.excludedDirectories.add(file);
+		if (filesRepresentingDirectories != null) {
+			this.excludedDirectories.addAll(filesRepresentingDirectories);
+		} else {
+			for (File file : this.excludedFiles) {
+				if (file.isDirectory()) {
+					this.excludedDirectories.add(file);
+				}
 			}
 		}
 	}
