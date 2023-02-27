@@ -556,7 +556,7 @@ public class CatBackFrame extends ApplicationFrame implements
 		
 		// initialize Backup Engine Manager for new backup
 		BackupEngineManager bem = ResourceManager.getInstance().getResource(BackupEngineManager.class);
-		bem.initializeForBackup(inputProcessor, backupStats);
+		bem.initializeForBackup(inputProcessor, excludedTree, backupStats);
 		
 		// setup all CatBack panels
 		BackupResources res = new BackupResources();
@@ -655,12 +655,6 @@ public class CatBackFrame extends ApplicationFrame implements
 		this.navNextButton.setText(panelHandler.getNavForwardText());
 	}
 
-	public CheckboxFileTree getExcludedFileTree() {
-		//TODO:  Consider how to refactor this -- maybe store the excluded tree in the ResourceManager?
-		// excludedtree is needed in several places throughout the application
-		return this.excludedTree;
-	}
-	
 	@Override
 	public void actionPerformed(RecentlyLoadedActionEvent event) {
 		executeOpen(event.getFile());		

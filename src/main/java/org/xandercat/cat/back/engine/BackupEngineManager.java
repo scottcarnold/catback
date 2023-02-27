@@ -56,7 +56,6 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 				executingBackupIDs.add(backup.getId());
 				updateEnabled();
 				FileIconCache fileIconCache = ResourceManager.getInstance().getResource(FileIconCache.class);
-				CheckboxFileTree excludedTree = catBackFrame.getExcludedFileTree();	
 				BackupEngine backupEngine = new BackupEngine(catBackFrame, backup, fileIconCache, excludedTree, stats);
 				backupEngine.addBackupEngineListener(this);
 				for (BackupEngineListener listener : backupEngineListeners) {
@@ -82,6 +81,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 	private final FileManager<CatBackup15> backupFileManager;
 	private final Set<String> executingBackupIDs = new HashSet<String>();
 	private InputProcessor inputProcessor;
+	private CheckboxFileTree excludedTree;
 	private BackupStats stats;
 	private BeginBackupAction beginBackupAction;
 	private final Set<BackupEngineListener> backupEngineListeners = new HashSet<BackupEngineListener>();
@@ -116,8 +116,9 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 	 * @param inputProcessor	InputProcessor for backup input fields
 	 * @param backupStats		Backup statistics for backup
 	 */
-	public void initializeForBackup(InputProcessor inputProcessor, BackupStats backupStats) {
+	public void initializeForBackup(InputProcessor inputProcessor, CheckboxFileTree excludedTree, BackupStats backupStats) {
 		this.inputProcessor = inputProcessor;
+		this.excludedTree = excludedTree;
 		this.stats = backupStats;
 		beginBackupAction.updateEnabled();
 	}
@@ -130,6 +131,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 	@Override
 	public void afterClose() {
 		this.inputProcessor = null;
+		this.excludedTree = null;
 		beginBackupAction.updateEnabled();
 	}
 
