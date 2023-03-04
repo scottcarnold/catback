@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xandercat.cat.back.CatBackup15;
 import org.xandercat.cat.back.engine.BackupEngine;
 import org.xandercat.cat.back.engine.BackupEngineListener;
@@ -29,6 +31,7 @@ import org.xandercat.swing.zenput.processor.SourceProcessor;
 public class ImmediateFileBackupFrame extends ApplicationFrame implements BackupEngineListener {
 
 	private static final long serialVersionUID = 2009032701L;
+	private static final Logger log = LogManager.getLogger(ImmediateFileBackupFrame.class);
 	
 	private String backupProfileFilename;
 	
@@ -62,7 +65,8 @@ public class ImmediateFileBackupFrame extends ApplicationFrame implements Backup
 				try {
 					stats = new BackupStats(backup.getBackupDirectory());
 				} catch (Exception e) {
-					//TODO: Might want to do something about the error here
+					log.error("Error while attempting to load prior backup statistics.", e);
+					//TODO: Consider possibly prompting user for what to do or maybe just exiting with error code.
 					stats = new BackupStats();
 				}
 				BackupEngine backupEngine = new BackupEngine(this, backup, fileIconCache, excludedTree, stats);
@@ -70,10 +74,9 @@ public class ImmediateFileBackupFrame extends ApplicationFrame implements Backup
 				backupEngine.setRunQuiet(true);
 				SwingWorkerUtil.execute(backupEngine);
 			} catch (Exception e) {
-				final String message = e.getMessage();
-				System.out.println("Unable to complete backup.\n" + message);
+				log.error("Backup could not be completed.", e);
 				JOptionPane.showMessageDialog(this, 
-						"Unable to perform backup.\n" + message, 
+						"Unable to perform backup.\n", 
 						"Backup Error", JOptionPane.ERROR_MESSAGE);
 				backupEngineComplete(null, false, false);
 			}

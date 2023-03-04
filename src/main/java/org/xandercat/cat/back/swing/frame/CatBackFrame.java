@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,10 +178,10 @@ public class CatBackFrame extends ApplicationFrame implements
 		
 		// create About dialog
 		ImageIcon aboutImageIcon = new ImageIcon(Images.getImage(Images.CATBACK));
-		File aboutMarkdownFile = new File("RELEASE_NOTES.md");
+		InputStream aboutMarkdownIS = getClass().getResourceAsStream("/RELEASE_NOTES.md");
 		this.aboutDialog = new AboutDialog(this);
 		this.aboutDialog.setImageIcon(aboutImageIcon);
-		this.aboutDialog.addMarkdownContent(aboutMarkdownFile);
+		this.aboutDialog.addMarkdownContent(aboutMarkdownIS, "background-color: #F0F0F0; padding-left: 10px; padding-right: 10px");
 		this.aboutDialog.build();
 		
 		// create icon cache

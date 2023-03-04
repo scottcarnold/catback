@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>org.xandercat</groupId>
 			<artifactId>catswing</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.xandercat</groupId>
@@ -35,6 +35,31 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}</directory>
+									<includes>
+										<include>RELEASE_NOTES.md</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.3.0</version>
 				<configuration>
@@ -43,6 +68,9 @@
 							<addClasspath>true</addClasspath>
 							<mainClass>org.xandercat.cat.back.CatBack</mainClass>
 						</manifest>
+						<manifestEntries>
+							<SplashScreen-Image>image/catback_splash.png</SplashScreen-Image>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>

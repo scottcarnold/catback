@@ -17,8 +17,9 @@ import org.xandercat.swing.cache.WeakReferenceCache;
  */
 public class Images extends WeakReferenceCache<String, Image> {
 
-	public static final String CATBACK = "image/catback_icon.png";
-	public static final String GLACIER = "image/Glacier.jpg";
+	public static final String CATBACK = "/image/catback_icon.png";
+	public static final String CATBACK_SPLASH = "/image/catback_splash.png";
+	public static final String GLACIER = "/image/Glacier.jpg";
 
 	private static final Logger log = LogManager.getLogger(Images.class);
 	private static final Images instance = new Images();
