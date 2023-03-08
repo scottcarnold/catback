@@ -36,6 +36,11 @@ public class LoadCurrentFiles extends LoadFilesWorklet<Set<BackupFile>> {
 	}
 	
 	@Override
+	public void enableDryRun(String dryRunPrefix) {
+		// no action required
+	}
+
+	@Override
 	public List<BackupFile> execute() throws Exception {
 		log.info("Loading current files list...");
 		Set<BackupFile> currentFilesSet = backupFiles;	// start out using set for performance

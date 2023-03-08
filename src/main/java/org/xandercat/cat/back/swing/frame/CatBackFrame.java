@@ -585,6 +585,26 @@ public class CatBackFrame extends ApplicationFrame implements
 		log.info("Backup " + backup.getName() + " loaded.");
 	}
 	
+	public void setDryRun(boolean dryRun) {
+		final String dryRunText = " [DRY RUN]";
+		BackupEngineManager bem = ResourceManager.getInstance().getResource(BackupEngineManager.class);
+		if (dryRun == bem.isDryRun()) {
+			return;
+		}
+		bem.setDryRun(dryRun);
+		if (dryRun) {
+			log.warn("DRY RUN mode enabled.  Backups will be simulated.  No changes to the file system will take place when backup is executed.");
+			final String message = "Application is running in DRY RUN mode.\n\nBackups will be simulated only, and will not actually produce any new backups, modify previous backup locations,\nor update any backup statistics.  However, changes to backup settings will take affect.";
+			setTitle(getTitle() + dryRunText);
+			SwingUtilities.invokeLater(() -> {
+				JOptionPane.showMessageDialog(this, message, "Dry Run Warning", JOptionPane.WARNING_MESSAGE);
+			});
+		} else {
+			log.warn("DRY RUN mode disabled.  Backups will no longer be simulated.");
+			setTitle(getTitle().substring(0, getTitle().length()-dryRunText.length()));
+		}
+	}
+	
 	public void executeNew() {
 		CatBackup15 backup = new CatBackup15();
 		try {

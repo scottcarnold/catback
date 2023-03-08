@@ -52,6 +52,8 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 	//TODO:  Add way to save problem files for later retry and resolution
 	//TODO:  Layout on the copy process status tab could be nicer
 	//TODO:  Either turn off row selection in resolution tab or provide a way to perform actions on selected rows
+	//TODO:  Address issue with Files Copied including directories (but the backup engine doesn't do this, so the counts are off between the two)
+	//       Consider maybe changing to only count files, and maybe show directories as [CREATED] instead of [COPIED] as [COPIED] can be misleading to users
 	
 	private static final Logger log = LogManager.getLogger(FileCopyProcessFrame.class);
 	private static final long serialVersionUID = 2009022101L;
@@ -91,6 +93,7 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 	private int errorsUntilHalt;
 	private int errorCount;
 	private boolean haltedDueToErrors;
+	private boolean testMode = false;
 	
 	public FileCopyProcessFrame(List<File> files, FileIconCache fileIconCache,
 			File destination, File source, boolean startCopyMinimized, boolean autoclose, int errorsUntilHalt) {
@@ -184,6 +187,10 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 		resolutionSplitPane.setOneTouchExpandable(true);
 	}
 	
+	public void enableTestMode() {
+		this.testMode = true;
+	}
+	
 	public void addFileCopyListener(FileCopyListener listener) {
 		fileCopyListeners.add(listener);
 	}
@@ -215,6 +222,9 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 			} else {
 				fileCopier = new SwingFileCopier(files, pathGenerator);
 			}
+			if (testMode) {
+				fileCopier.enableTestMode();
+			}
 			fileCopier.addFileCopyListener(this);
 			for (FileCopyListener listener : this.fileCopyListeners) {
 				fileCopier.addFileCopyListener(listener);
@@ -224,7 +234,11 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 					fileCopier.addFileCopyProgressListener(listener);
 				}
 			}
-			headingLabel.setText("Copying " + files.size() + " files...");
+			if (testMode) {
+				headingLabel.setText("Copying " + files.size() + " files (SIMULATED)...");
+			} else {
+				headingLabel.setText("Copying " + files.size() + " files...");
+			}
 			
 			// set up overwrite files table
 			overwriteModel = new FileOverwriteTableModel(fileCopier, overwriteAllButton, overwriteCancelAllButton);
@@ -253,10 +267,12 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 	/**
 	 * Cancel any copy currently in progress (if any).
 	 */
-	public void cancelCopyInProgress() {
+	public boolean cancelCopyInProgress() {
 		if (fileCopier != null) {
 			fileCopier.cancel();
+			return true;
 		}
+		return false;
 	}
 	
 	public boolean isHaltedDueToErrors() {

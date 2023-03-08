@@ -29,6 +29,11 @@ public class LoadBackupFiles extends LoadFilesWorklet<List<BackupFile>> {
 	}
 
 	@Override
+	public void enableDryRun(String dryRunPrefix) {
+		// no action required
+	}
+
+	@Override
 	public List<BackupFile> execute() throws Exception {
 		log.info("Loading previous files list (est. " + totalFiles + ")...");
 		List<BackupFile> previousFiles = backupFiles;

@@ -57,6 +57,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 				updateEnabled();
 				FileIconCache fileIconCache = ResourceManager.getInstance().getResource(FileIconCache.class);
 				BackupEngine backupEngine = new BackupEngine(catBackFrame, backup, fileIconCache, excludedTree, stats);
+				backupEngine.setDryRun(BackupEngineManager.this.dryRun);
 				backupEngine.addBackupEngineListener(this);
 				for (BackupEngineListener listener : backupEngineListeners) {
 					backupEngine.addBackupEngineListener(listener);
@@ -85,6 +86,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 	private BackupStats stats;
 	private BeginBackupAction beginBackupAction;
 	private final Set<BackupEngineListener> backupEngineListeners = new HashSet<BackupEngineListener>();
+	private boolean dryRun;
 	
 	public BackupEngineManager(CatBackFrame catBackFrame, FileManager<CatBackup15> backupFileManager) {
 		this.catBackFrame = catBackFrame;
@@ -101,6 +103,21 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 		backupEngineListeners.remove(listener);
 	}
 	
+	public boolean isDryRun() {
+		return dryRun;
+	}
+
+	/**
+	 * Sets the backup system "dry run" mode.  When in dry run mode, any launched backups will be simulated.
+	 * The backup engine will go through many of the normal steps in executing a backup, but no actual changes to 
+	 * the file system will take place.
+	 * 
+	 * @param dryRun  when true, backups are simulated.
+	 */
+	public void setDryRun(boolean dryRun) {
+		this.dryRun = dryRun;
+	}
+
 	/**
 	 * Returns an action that can be used to initiate backup.
 	 * 

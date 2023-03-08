@@ -39,6 +39,7 @@ import org.xandercat.swing.worker.SwingWorkletManager;
 public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implements SwingWorkletManager<String>, CloseListener {
 
 	private static final Logger log = LogManager.getLogger(BackupEngine.class);
+	private static final String DRY_RUN_PREFIX = "[DRY RUN / SIMULATED] ";
 	
 	public static final String LATEST_BACKUP_DIR_NAME = "latest";
 	public static final String LATEST_FILE_LIST_FILE_NAME = ".cb_filelist";
@@ -76,6 +77,8 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 	private MoveFiles moveFiles;
 	private CopyFiles copyFiles;
 	private long backupSize;  // used to hold size of backup to be saved in backup stat when done
+	private boolean dryRun;
+	private boolean active;
 	
 	public BackupEngine(ApplicationFrame parent, 
 			CatBackup15 backup, 
@@ -132,9 +135,20 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 		this.runQuiet = runQuiet;
 	}
 
+	public boolean isDryRun() {
+		return dryRun;
+	}
+	
+	public void setDryRun(boolean dryRun) {
+		if (active) {
+			throw new UnsupportedOperationException("DryRun cannot be changed while backup engine is active.");
+		}
+		this.dryRun = dryRun;
+	}
+	
 	@Override
 	protected Void doInBackground() throws Exception {
-		
+		this.active = true;
 		try {
 		
 			this.stat.setBackupId(backupId);
@@ -143,6 +157,9 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			this.stat.setIncrementalBackupDirectory(incrementalBackupDirectory);
 			
 			LoadCurrentFiles loadCurrentFiles = new LoadCurrentFiles(this, excludedTree, currentFilesAndDirectories, backupDirectory);
+			if (dryRun) {
+				loadCurrentFiles.enableDryRun(DRY_RUN_PREFIX);
+			}
 			publishStep(1, loadCurrentFiles);
 			List<BackupFile> currentFiles = loadCurrentFiles.execute();		
 			this.stat.setTotalFiles(loadCurrentFiles.getFilesCount());
@@ -160,19 +177,25 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			}
 			if (scanLastBackup || backupFiles == null) {
 				this.loadBackupFiles = new LoadBackupFiles(this, excludedTree, backupDirectory, stats.getLatestStat());
+				if (dryRun) {
+					loadBackupFiles.enableDryRun(DRY_RUN_PREFIX);
+				}
 				publishStep(2, loadBackupFiles);
 				backupFiles = loadBackupFiles.execute();
 				this.backupSize = loadBackupFiles.getFilesSize();
 			}
 			
 			CompareFiles compareFiles = new CompareFiles(this, currentFiles, backupFiles);
+			if (dryRun) {
+				loadCurrentFiles.enableDryRun(DRY_RUN_PREFIX);
+			}
 			publishStep(3, compareFiles);
 			if (showMoveCopyDialog && !runQuiet) {
 				compareFiles.enableShowMoveCopyDialog(parent, fileIconCache);
 			}
 			if (!compareFiles.execute().booleanValue()) {
 				this.stat.setBackupStatus(BackupStatus.CANCELLED_BEFORE);
-				cancel(true);	// TODO: Should this be done on the EDT?
+				cancel(true);
 				return null;
 			}
 			long bytesToMove = compareFiles.getBytesToMove();
@@ -183,14 +206,22 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			if (limitIncrementalBackups) {
 				ApplyIncrementalBackupLimits applyBackupLimits = new ApplyIncrementalBackupLimits(this, 
 						baseBackupDirectory, keepAtLeastTime, keepNoMoreThanTime, keepNoMoreThanBytes, bytesToMove);
+				if (dryRun) {
+					applyBackupLimits.enableDryRun(DRY_RUN_PREFIX);
+				}
 				publishStep(4, applyBackupLimits);
 				applyBackupLimits.execute();
 			}
 			
-			latestFileListFile.delete();  // file contents no longer valid once move/copy steps start
+			if (!dryRun) {
+				latestFileListFile.delete();  // file contents no longer valid once move/copy steps start
+			}
 			
 			if (filesToMove.size() > 0) {
 				this.moveFiles = new MoveFiles(this, filesToMove, filesToCopy, incrementalBackupDirectory);
+				if (dryRun) {
+					moveFiles.enableDryRun(DRY_RUN_PREFIX);
+				}
 				publishStep(5, moveFiles);
 				moveFiles.execute();
 				this.backupSize -= moveFiles.getFilesSize();
@@ -200,6 +231,9 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 				this.copyFiles = new CopyFiles(this, filesToCopy, bytesToCopy, 
 						backupDirectory, fileIconCache, errorsUntilHalt);
 				this.copyFiles.setAlwaysLeaveCopyWindowOpen(this.leaveCopyWindowOpen);
+				if (dryRun) {
+					this.copyFiles.enableDryRun(DRY_RUN_PREFIX);
+				}
 				publishStep(6, copyFiles);
 				boolean haltedDueToErrors = copyFiles.execute();
 				this.resolutionRequired = copyFiles.isResolutionRequired();
@@ -219,7 +253,9 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 					backupFiles.add(new BackupFile(gfile, BackupFile.Type.DESTINATION, backupDirectory));
 				}
 				Collections.sort(backupFiles);
-				FileManager.saveObject(latestFileListFile, new FileListData(backupFiles, backupSize));
+				if (!dryRun) {
+					FileManager.saveObject(latestFileListFile, new FileListData(backupFiles, backupSize));
+				}
 			}
 			
 		} catch (Exception e) {
@@ -231,7 +267,8 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 	}
 
 	private void publishStep(int stepNumber, BackupEngineWorklet<?> worklet) {
-		publish(new BackupEngineProgress("Step " + stepNumber + "/6: " + worklet.getTitle() + "...", null));
+		String dryRunPrefix = dryRun? DRY_RUN_PREFIX : "";
+		publish(new BackupEngineProgress(dryRunPrefix + "Step " + stepNumber + "/6: " + worklet.getTitle() + "...", null));
 	}
 	
 	@Override
@@ -250,8 +287,12 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			this.stat.setFilesCopied(copyFiles.getFilesCopied());
 		}
 		try {
-			stats.addBackupStat(stat);
-			stats.saveStats(baseBackupDirectory);
+			if (dryRun) {
+				log.info("Stats for dry run (will not be saved): " + stat.toString());
+			} else {
+				stats.addBackupStat(stat);
+				stats.saveStats(baseBackupDirectory);
+			}
 		} catch (IOException ioe) {
 			log.error("Unable to save backup stats.", ioe);
 		}
@@ -262,6 +303,9 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 		if (this.stat.getBackupStatus() == BackupStatus.ERROR) {
 			backupStatus = "Backup process encountered an error.  See the log for details.";
 		}
+		if (dryRun) {
+			backupStatus = DRY_RUN_PREFIX + backupStatus;
+		}
 		if (!runQuiet) {
 			JOptionPane.showMessageDialog(parent, backupName + "\n" + backupStatus + "\nOlder files moved: " + this.stat.getFilesMoved() + "\nNewer files copied: " + this.stat.getFilesCopied());
 		}
@@ -271,6 +315,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			}
 			listeners = null;
 		}
+		this.active = false;
 	}
 
 	@Override
@@ -298,6 +343,10 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			progressMonitor = new ProgressMonitor(parent, "Backup Progress", heading, 0L, progressMaximum);
 			progressMonitor.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
+					// need to force cancel the file copier if it's running and not already cancelled
+					if (copyFiles != null && !copyCancelled && !copyFiles.isCopyComplete()) {
+						copyCancelled = copyFiles.cancelCopy();
+					}
 					cancel(true);
 				}
 			});

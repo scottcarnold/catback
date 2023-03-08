@@ -44,6 +44,11 @@ public class CompareFiles extends BackupEngineWorklet<Boolean> {
 		return "Comparing files";
 	}
 
+	@Override
+	public void enableDryRun(String dryRunPrefix) {
+		// no action required
+	}
+
 	public void enableShowMoveCopyDialog(Frame parent, FileIconCache fileIconCache) {
 		this.showMoveCopyDialog = true;
 		this.parent = parent;
@@ -63,9 +68,6 @@ public class CompareFiles extends BackupEngineWorklet<Boolean> {
 			if (currentFile != null) {
 				publish("Comparing " + currentFile.getFile().getName());
 			}
-			//log.debug("------- compare interation -------");
-			//log.debug("Previous file is " + ((previousFile == null)? "null" : previousFile.toString()));
-			//log.debug("Current file is  " + ((currentFile == null)? "null" : currentFile.toString()));
 			if (previousFile == null || previousFile.compareTo(currentFile) > 0) {
 				//log.debug("Previous is greater than current (or previous is null), moving current to copy list");
 				filesToCopy.add(currentFile.getFile());

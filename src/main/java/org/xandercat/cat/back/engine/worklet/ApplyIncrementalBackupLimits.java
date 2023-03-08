@@ -31,6 +31,8 @@ public class ApplyIncrementalBackupLimits extends BackupEngineWorklet<Void> {
 	private long keepNoMoreThanBytes;
 	private long progressMaximum;
 	private long bytesToMove;
+	private boolean dryRun;
+	private String dryRunPrefix = "";
 	
 	public ApplyIncrementalBackupLimits(BackupEngine backupEngine, File baseBackupDirectory, TimeDuration keepAtLeastTime, TimeDuration keepNoMoreThanTime, long keepNoMoreThanBytes, long bytesToMove) {
 		super(backupEngine);
@@ -47,8 +49,14 @@ public class ApplyIncrementalBackupLimits extends BackupEngineWorklet<Void> {
 	}
 
 	@Override
+	public void enableDryRun(String dryRunPrefix) {
+		this.dryRun = true;
+		this.dryRunPrefix = dryRunPrefix;
+	}
+
+	@Override
 	public Void execute() throws Exception {
-		log.info("Applying incremental backup limits...");
+		log.info(dryRunPrefix + "Applying incremental backup limits...");
 		FileFilter filter = new FileFilter() {
 			public boolean accept(File file) {
 				return file.isDirectory() 
@@ -116,8 +124,13 @@ public class ApplyIncrementalBackupLimits extends BackupEngineWorklet<Void> {
 				if (isCancelled()) {
 					break;
 				}
-				publish("Removing expired incremental backup " + directory.getAbsolutePath());
-				FileUtil.delete(directory);
+				if (dryRun) {
+					publish(dryRunPrefix + "Removing expired incremental backup " + directory.getAbsolutePath());
+					Thread.sleep(1000);
+				} else {
+					publish("Removing expired incremental backup " + directory.getAbsolutePath());
+					FileUtil.delete(directory);
+				}
 				advanceProgress(1);
 			}
 		}
@@ -143,10 +156,12 @@ public class ApplyIncrementalBackupLimits extends BackupEngineWorklet<Void> {
 			log.info("Getting incremental backup size using Directory Size Cache...");
 			FilesSize filesSize = DirectorySizeCache.getInstance().loadDirectorySize(incrementalBackupDirectory);
 			backupSize = filesSize.getBytes();
-			try {
-				FileManager.saveObject(sizeFile, Long.valueOf(backupSize));
-			} catch (IOException e) {
-				log.warn("Unable to save incremental backup file size to incremental backup folder " + incrementalBackupDirectory.getAbsolutePath());
+			if (!dryRun) {
+				try {
+					FileManager.saveObject(sizeFile, Long.valueOf(backupSize));
+				} catch (IOException e) {
+					log.warn("Unable to save incremental backup file size to incremental backup folder " + incrementalBackupDirectory.getAbsolutePath());
+				}
 			}
 		}
 		log.debug("Incremental backup " + incrementalBackupDirectory.getName() + " size = " + backupSize);

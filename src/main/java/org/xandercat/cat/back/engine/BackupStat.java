@@ -125,4 +125,13 @@ public class BackupStat implements Serializable, Comparable<BackupStat> {
 	public int compareTo(BackupStat o) {
 		return dateStarted.compareTo(o.dateStarted);
 	}
+
+	@Override
+	public String toString() {
+		return "BackupStat [backupId=" + backupId + ", dateStarted=" + dateStarted + ", dateFinished=" + dateFinished
+				+ ", backupStatus=" + backupStatus + ", backupSize=" + backupSize + ", totalFiles=" + totalFiles
+				+ ", filesMoved=" + filesMoved + ", filesCopied=" + filesCopied + ", baseBackupDirectory="
+				+ baseBackupDirectory + ", incrementalBackupDirectory=" + incrementalBackupDirectory
+				+ ", incrementalBackupSize=" + incrementalBackupSize + "]";
+	}
 }

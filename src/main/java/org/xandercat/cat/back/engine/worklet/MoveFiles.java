@@ -21,6 +21,8 @@ public class MoveFiles extends BackupEngineWorklet<Void> {
 	private File incrementalBackupDirectory;
 	private volatile int filesMoved;
 	private volatile long filesSize;
+	private boolean dryRun;
+	private String dryRunPrefix = "";
 	
 	public MoveFiles(BackupEngine backupEngine, List<BackupFile> filesToMove, List<File> filesToCopy, File incrementalBackupDirectory) {
 		super(backupEngine);
@@ -35,9 +37,19 @@ public class MoveFiles extends BackupEngineWorklet<Void> {
 	}
 
 	@Override
+	public void enableDryRun(String dryRunPrefix) {
+		this.dryRun = true;
+		this.dryRunPrefix = dryRunPrefix;
+	}
+
+	@Override
 	public Void execute() throws Exception {
-		log.info("Moving changed and deleted files to incremental backup directory...");
-		incrementalBackupDirectory.mkdir();
+		log.info(dryRunPrefix + "Moving changed and deleted files to incremental backup directory...");
+		if (dryRun) {
+			log.info(dryRunPrefix + "Incremental backup directory to create: " + incrementalBackupDirectory.getAbsolutePath());
+		} else {
+			incrementalBackupDirectory.mkdir();
+		}
 		List<BackupFile> moveFailures = new ArrayList<BackupFile>();
 		List<BackupFile> directoriesMoved = new ArrayList<BackupFile>();
 		for (BackupFile latestFile : filesToMove) {
@@ -51,34 +63,36 @@ public class MoveFiles extends BackupEngineWorklet<Void> {
 			try {
 				File generationFile = latestFile.toGenerationFile(incrementalBackupDirectory);
 				log.debug("Renaming " + latestFile.getFile().getAbsolutePath() + " to " + generationFile.getAbsolutePath());
-				publish("Moving " + generationFile.getName());
-				generationFile.getParentFile().mkdirs();
-				if (!latestFile.getFile().renameTo(generationFile)) {
-					moveFailures.add(latestFile);
-					log.warn("Unable to move file " + latestFile.toString());
-				} else {
-					if (generationFile.isDirectory()) {
-						directoriesMoved.add(latestFile);
-						FilesSize size = DirectorySizeCache.getInstance().loadDirectorySize(generationFile);
-						filesMoved += size.getFiles();
-						filesSize += size.getBytes();
+				publish(dryRunPrefix + "Moving " + generationFile.getName());
+				if (!dryRun) {
+					generationFile.getParentFile().mkdirs();
+					if (!latestFile.getFile().renameTo(generationFile)) {
+						moveFailures.add(latestFile);
+						log.warn("Unable to move file " + latestFile.toString());
 					} else {
-						filesMoved++;
-						filesSize += generationFile.length();
-					}
-					// remove any directory that is empty and is not itself to be backed up
-					File parent = latestFile.getFile().getParentFile();
-					while (parent != null && parent.listFiles() == null) {
-						if (!filesToCopy.contains(parent)) {	// potentially expensive call, but shouldn't happen often
-							try {
-								if (!parent.delete()) {
-									log.warn("Unable to remove empty parent directory " + parent.getAbsolutePath());
-								}
-							} catch (Exception e) {
-								log.warn("Unable to remove empty parent directory " + parent.getAbsolutePath(), e);
-							}
+						if (generationFile.isDirectory()) {
+							directoriesMoved.add(latestFile);
+							FilesSize size = DirectorySizeCache.getInstance().loadDirectorySize(generationFile);
+							filesMoved += size.getFiles();
+							filesSize += size.getBytes();
+						} else {
+							filesMoved++;
+							filesSize += generationFile.length();
 						}
-						parent = parent.getParentFile();
+						// remove any directory that is empty and is not itself to be backed up
+						File parent = latestFile.getFile().getParentFile();
+						while (parent != null && parent.listFiles() == null) {
+							if (!filesToCopy.contains(parent)) {	// potentially expensive call, but shouldn't happen often
+								try {
+									if (!parent.delete()) {
+										log.warn("Unable to remove empty parent directory " + parent.getAbsolutePath());
+									}
+								} catch (Exception e) {
+									log.warn("Unable to remove empty parent directory " + parent.getAbsolutePath(), e);
+								}
+							}
+							parent = parent.getParentFile();
+						}
 					}
 				}
 			} catch (Exception e) {

@@ -30,7 +30,10 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 	private FileCopyProcessFrame copyFrame;
 	private boolean resolutionRequired;
 	private boolean copyCancelled;
+	private boolean copyComplete;
 	private int errorsUntilHalt;
+	private boolean dryRun;
+	private String dryRunPrefix = "";
 	
 	public CopyFiles(BackupEngine backupEngine, List<File> filesToCopy, long bytesToCopy, 
 			File backupDirectory, FileIconCache fileIconCache, int errorsUntilHalt) {
@@ -42,6 +45,11 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 		this.errorsUntilHalt = errorsUntilHalt;
 	}
 
+	public void enableDryRun(String dryRunPrefix) {
+		this.dryRun = true;
+		this.dryRunPrefix = dryRunPrefix;
+	}
+	
 	@Override
 	public String getTitle() {
 		return "Backing up files";
@@ -53,12 +61,15 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 	
 	@Override
 	public Boolean execute() throws Exception {
-		log.info("Backing up " + filesToCopy.size() + " files to main backup directory...");
+		log.info(dryRunPrefix + "Backing up " + filesToCopy.size() + " files to main backup directory...");
 		BackupPathGenerator pathGenerator = new BackupPathGenerator(backupDirectory);
 		this.copyFrame = new FileCopyProcessFrame(
 				filesToCopy, fileIconCache, pathGenerator, true, !alwaysLeaveCopyWindowOpen, errorsUntilHalt);
 		this.copyFrame.addFileCopyListener(this);
 		this.copyFrame.addFileCopyProgressListener(this);
+		if (dryRun) {
+			this.copyFrame.enableTestMode();
+		}
 		this.countDownLatch = new CountDownLatch(1); 
 		this.copyFrame.copy();
 		try {
@@ -93,17 +104,27 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 		return copyCancelled;
 	}
 
+	public boolean isCopyComplete() {
+		return copyComplete;
+	}
+	
+	public boolean cancelCopy() {
+		if (copyFrame != null) {
+			// if there is a copier that actually gets cancelled, don't wait on copyComplete event to set copyCancelled flag; set it immediately.
+			this.copyCancelled = copyFrame.cancelCopyInProgress();
+		}
+		return this.copyCancelled;
+	}
+	
 	public void fileCopying(File from, File to, long bytesCopied, boolean copyComplete) {
 		advanceProgress(bytesCopied - lastBytesCopied);
 		lastBytesCopied = copyComplete? 0 : bytesCopied;
-		if (isCancelled() && copyFrame != null) {
-			copyFrame.cancelCopyInProgress();
-		}
 	}
 
 	public void copyComplete(boolean resolutionRequired, boolean copyCancelled) {
 		this.resolutionRequired = resolutionRequired;
 		this.copyCancelled = copyCancelled;
+		this.copyComplete = true;
 		this.countDownLatch.countDown();	
 	}
 
@@ -115,6 +136,6 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 	}
 
 	public void fileCopying(File from, File to) {
-		publish("Copying " + from.getName());	
+		publish(dryRunPrefix + "Copying " + from.getName());
 	}
 }

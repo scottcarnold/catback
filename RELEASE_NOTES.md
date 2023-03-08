@@ -20,6 +20,8 @@ Planned Release 3/31/2023
 + Updated from Log4J to Log4J2
 + Due to the Log4J changes, the behavior of logging had to be revised. If you change the logging configuration with the -l flag, the changes will not take effect until the application is restarted.  In addition, if you set logging to "window", the logging window will now be opened via a menu item in the Window drop down menu.
 + Removed directory size cache debugging window and associated command line flag
++ Added command line flag for doing backup "dry runs" to be able to simulate backups without actually running them
++ Fixed issue with file copy process step not always responding properly to cancel request
 + Fixed resource leak in file copier
 + Other minor bug fixes and optimizations
 + About dialog updated to use RELEASE_NOTES.md for content

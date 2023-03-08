@@ -333,11 +333,11 @@ public class FileCopier {
 	}
 	
 	private File getDestinationFile(File file) {
-		//TODO: What to do about when sourcePath is null and we have a filename collision?
 		String filePath = null;
 		if (pathGenerator != null) {
 			filePath = pathGenerator.generateDestinationPath(file);
 		} else if (sourcePath == null) {
+			//Note:  a filename collision can result in this case, but this should be handled by the normal skip/overwrite behavior			
 			filePath = destinationPath + File.separator + file.getName();
 		} else {
 			filePath = destinationPath + file.getAbsolutePath().substring(sourcePath.length());
@@ -400,10 +400,6 @@ public class FileCopier {
 	public void copy() {
 		boolean cancelled = false;
 		for (File file : files) {
-			if (testMode) {
-				File destFile = getDestinationFile(file);
-				System.out.println("Copying file " + file.getAbsolutePath() + " to " + destFile.getAbsolutePath());
-			}
 			if (this.cancelled) {
 				cancelled = true;
 				break;
@@ -473,6 +469,9 @@ public class FileCopier {
 
 	private boolean copyFile(File file, boolean overwrite) {
 		File destFile = getDestinationFile(file);
+		if (testMode) {
+			log.info("Simulating copy of file " + file.getAbsolutePath() + " to " + destFile.getAbsolutePath());
+		}
 		fireFileCopying(file, destFile);
 		boolean copied = false;
 		//note: overwrite flag is only true after the first pass; for that reason, it is not necessary
@@ -489,7 +488,7 @@ public class FileCopier {
 		} else {
 			try {
 				if (testMode) {
-					Thread.sleep(Math.min(3000, file.length()/200));
+					Thread.sleep(Math.min(3000, file.length()/10000));
 				} else {
 					copyFileInternal(file, destFile, overwrite, true);
 				}
