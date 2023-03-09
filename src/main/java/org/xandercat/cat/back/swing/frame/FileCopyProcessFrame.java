@@ -1,6 +1,8 @@
 package org.xandercat.cat.back.swing.frame;
 
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -18,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.border.BevelBorder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,23 +53,21 @@ import org.xandercat.swing.worker.SwingWorkerUtil;
 public class FileCopyProcessFrame extends JFrame implements FileCopyListener, WindowListener {
 
 	//TODO:  Add way to save problem files for later retry and resolution
-	//TODO:  Layout on the copy process status tab could be nicer
-	//TODO:  Either turn off row selection in resolution tab or provide a way to perform actions on selected rows
-	//TODO:  Address issue with Files Copied including directories (but the backup engine doesn't do this, so the counts are off between the two)
-	//       Consider maybe changing to only count files, and maybe show directories as [CREATED] instead of [COPIED] as [COPIED] can be misleading to users
 	
 	private static final Logger log = LogManager.getLogger(FileCopyProcessFrame.class);
 	private static final long serialVersionUID = 2009022101L;
-	private static final String FILES_COPIED_MSG = "Files Copied: ";
-	private static final String ALREADY_EXIST_MSG = "Already Existing Files: ";
-	private static final String ERROR_MSG = "File Copy Errors: ";
-	private static final String SKIP_MSG = "Skipped Files: ";
+	private static final String FILES_COPIED_TITLE = "Files Copied";
+	private static final String DIRECTORIES_CREATED_TITLE = "Directories Created";
+	private static final String ALREADY_EXIST_TITLE = "Already Existing";
+	private static final String ERROR_TITLE = "Errors";
+	private static final String SKIP_TITLE = "Skipped ";
 	
 	private JLabel headingLabel;
-	private JLabel filesCopiedLabel;
-	private JLabel filesAlreadyExistLabel;
-	private JLabel copyErrorsLabel;
-	private JLabel skippedLabel;
+	private JLabel filesCopiedCounterLabel = new JLabel("0");
+	private JLabel directoriesCreatedCounterLabel = new JLabel("0");
+	private JLabel filesAlreadyExistCounterLabel = new JLabel("0");
+	private JLabel copyErrorsCounterLabel = new JLabel("0");
+	private JLabel skippedCounterLabel = new JLabel("0");
 	private MessageScrollPane messageScrollPane;
 	private List<File> files;
 	private FileCopierPathGenerator pathGenerator;
@@ -85,8 +86,10 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 	private FileErrorTableModel errorModel;
 	private boolean startCopyMinimized;		// start the copy process frame minimized
 	private boolean autoclose;				// autoclose if no problems to resolve
-	private int copied;
-	private int toCopy;
+	private int processed;                  // includes both files and directory entries processed
+	private int filesCopied;                // filesCopied includes only files (no directories) copied successfully
+	private int directoriesCreated;         // directoriesCreated includes only directories (no files) created successfully
+	private int toProcess;                  // total files and directory entries to process
 	private List<FileCopyListener> fileCopyListeners;
 	private List<FileCopyProgressListener> fileCopyProgressListeners;
 	private FileIconCache fileIconCache;
@@ -97,8 +100,8 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 	
 	public FileCopyProcessFrame(List<File> files, FileIconCache fileIconCache,
 			File destination, File source, boolean startCopyMinimized, boolean autoclose, int errorsUntilHalt) {
-		super("Copy " + files.size() + " Files");
-		this.toCopy = files.size();
+		super("Process " + files.size() + " Files");
+		this.toProcess = files.size();
 		this.files = files;
 		this.fileIconCache = fileIconCache;
 		this.destination = destination;
@@ -111,8 +114,8 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 	
 	public FileCopyProcessFrame(List<File> files, FileIconCache fileIconCache,
 			FileCopierPathGenerator pathGenerator, boolean startCopyMinimized, boolean autoclose, int errorsUntilHalt) {
-		super("Copy " + files.size() + " Files");
-		this.toCopy = files.size();
+		super("Process " + files.size() + " Files");
+		this.toProcess = files.size();
 		this.files = files;
 		this.fileIconCache = fileIconCache;
 		this.pathGenerator = pathGenerator;
@@ -125,7 +128,6 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 	private void initialize() {
 		addWindowListener(this);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		this.toCopy = files.size();
 		buildResolutionSplitPane();
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("Copy Process", buildCopyProcessPanel());
@@ -135,23 +137,40 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 		setLocationRelativeTo(null);	
 		this.fileCopyListeners = new ArrayList<FileCopyListener>();
 	}
+	private JPanel createCountPanel(String countTitle, JLabel countLabel) {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		JLabel titleLabel = new JLabel(countTitle);
+		panel.add(titleLabel);
+		JPanel countLabelPanel = new JPanel(new BorderLayout());
+		countLabelPanel.add(countLabel, BorderLayout.EAST);
+		panel.add(countLabelPanel);
+		panel.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createSoftBevelBorder(BevelBorder.LOWERED),
+				BorderFactory.createEmptyBorder(0, 5, 0, 5)));
+		return panel;
+	}
 	
 	private JPanel buildCopyProcessPanel() {
-		JPanel copyProcessPanel = new JPanel();
-		copyProcessPanel.setLayout(new BoxLayout(copyProcessPanel, BoxLayout.Y_AXIS));
+		JPanel copyProcessPanel = new JPanel(new BorderLayout());
+		JPanel copyProcessHeaderNorthPanel = new JPanel();
+		copyProcessHeaderNorthPanel.setLayout(new BoxLayout(copyProcessHeaderNorthPanel, BoxLayout.Y_AXIS));
+		JPanel headingPanel = new JPanel(new FlowLayout());
 		headingLabel = new JLabel("Preparing to copy files...");
-		filesCopiedLabel = new JLabel(FILES_COPIED_MSG + "0");
-		filesAlreadyExistLabel = new JLabel(ALREADY_EXIST_MSG + "0");
-		copyErrorsLabel = new JLabel(ERROR_MSG + "0");
-		skippedLabel = new JLabel(SKIP_MSG + "0");
-		copyProcessPanel.add(headingLabel);
-		copyProcessPanel.add(filesCopiedLabel);
-		copyProcessPanel.add(skippedLabel);
-		copyProcessPanel.add(filesAlreadyExistLabel);
-		copyProcessPanel.add(copyErrorsLabel);
+		headingLabel.setFont(headingLabel.getFont().deriveFont(Font.BOLD, 14f));
+		headingPanel.add(headingLabel);
+		copyProcessHeaderNorthPanel.add(headingPanel);
+		JPanel countersPanel = new JPanel(new FlowLayout());
+		countersPanel.add(createCountPanel(FILES_COPIED_TITLE, filesCopiedCounterLabel));
+		countersPanel.add(createCountPanel(DIRECTORIES_CREATED_TITLE, directoriesCreatedCounterLabel));
+		countersPanel.add(createCountPanel(ALREADY_EXIST_TITLE, filesAlreadyExistCounterLabel));
+		countersPanel.add(createCountPanel(SKIP_TITLE, skippedCounterLabel));
+		countersPanel.add(createCountPanel(ERROR_TITLE, copyErrorsCounterLabel));
+		copyProcessHeaderNorthPanel.add(countersPanel);
+		copyProcessPanel.add(copyProcessHeaderNorthPanel, BorderLayout.NORTH);
 		messageScrollPane = new MessageScrollPane();
-		messageScrollPane.setPreferredSize(600, 160);
-		copyProcessPanel.add(messageScrollPane);
+		messageScrollPane.setPreferredSize(700, 240);
+		copyProcessPanel.add(messageScrollPane, BorderLayout.CENTER);
 		return copyProcessPanel;
 	}
 	
@@ -235,9 +254,9 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 				}
 			}
 			if (testMode) {
-				headingLabel.setText("Copying " + files.size() + " files (SIMULATED)...");
+				headingLabel.setText("Processing " + toProcess + " files/directories (SIMULATED)...");
 			} else {
-				headingLabel.setText("Copying " + files.size() + " files...");
+				headingLabel.setText("Processing " + toProcess + " files/directories...");
 			}
 			
 			// set up overwrite files table
@@ -280,29 +299,40 @@ public class FileCopyProcessFrame extends JFrame implements FileCopyListener, Wi
 	}
 	
 	public void fileCopying(File from, File to) {
-		messageScrollPane.addMessage("Copying file " + from.getAbsolutePath());
+		if (from.isDirectory()) {
+			messageScrollPane.addMessage("Creating directory " + to.getAbsolutePath());
+		} else {
+			messageScrollPane.addMessage("Copying file " + from.getAbsolutePath());
+		}
 	}
 
 	public void fileCopied(File from, File to, FileCopier.CopyResult result) {
+		processed++;
+		String resultTag = result.toString();
 		switch (result) {
 		case ALREADY_EXISTS:
-			filesAlreadyExistLabel.setText(ALREADY_EXIST_MSG + fileCopier.getOverwriteFiles().size());
+			filesAlreadyExistCounterLabel.setText(String.valueOf(fileCopier.getOverwriteFiles().size()));
 			break;
 		case COPIED:
-			copied++;
-			filesCopiedLabel.setText(FILES_COPIED_MSG + fileCopier.getCopiedFiles().size());
+			if (from.isDirectory()) {
+				directoriesCreated++;
+				directoriesCreatedCounterLabel.setText(String.valueOf(directoriesCreated));
+				resultTag = "CREATED";
+			} else {
+				filesCopied++;
+				filesCopiedCounterLabel.setText(String.valueOf(filesCopied));
+			}
 			break;
 		case ERROR:
 			errorCount++;
-			copyErrorsLabel.setText(ERROR_MSG + fileCopier.getErrorFiles().size());
+			copyErrorsCounterLabel.setText(String.valueOf(errorCount));
 			break;
 		case SKIPPED:
-			copied++;
-			skippedLabel.setText(SKIP_MSG + fileCopier.getSkippedFiles().size());
+			skippedCounterLabel.setText(String.valueOf(fileCopier.getSkippedFiles().size()));
 			break;
 		}
-		messageScrollPane.appendMessage(" [" + result.toString() + "]");
-		setTitle(copied + "/" + toCopy + " copied");
+		messageScrollPane.appendMessage(" [" + resultTag + "]");
+		setTitle(processed + "/" + toProcess + " processed");
 		if (errorCount > 0 && errorCount % errorsUntilHalt == 0) {
 			int choice = JOptionPane.showConfirmDialog(this, 
 					errorCount + " copy errors have occurred.  Do you wish to continue the copy process?", 

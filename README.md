@@ -14,3 +14,4 @@ CatBack supports the following command line arguments:
     * window : log messages are routed to a dialog window accessible through drop down menu item Window -> Application Log; log messages are lost on exit
     * file : log messages are sent to a log file.  If filename is not provided, a default filename will be used.
 * -b [filename] : immediately launches backup of the supplied backup filename
+* -dryrun : start in "dry run" mode, where backups are simulated

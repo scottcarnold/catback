@@ -175,6 +175,37 @@ public class FileCopier {
 		}
 	}
 
+	private boolean simulateCopyFileInternal(File inFile, File outFile) {
+		if (inFile.isDirectory()) {
+			return true;
+		}
+		final long partialSize = 1000;
+		// simulate some copy time
+		try {
+			Thread.sleep(Math.min(3000, inFile.length()/20000));
+		} catch (InterruptedException ie) { }
+		// fire copyProgress for partial copy (or full copy if file is small)
+		fireCopyProgress(inFile, outFile, partialSize, partialSize >= inFile.length());
+		if (partialSize >= inFile.length()) {
+			return true;
+		}
+		if (cancelled) {
+			log.info("Simulation cancel occurred in middle of in progress file copy");
+			return false;
+		}
+		// simulate remaining copy time
+		try {
+			Thread.sleep(Math.min(3000, inFile.length()/20000));
+		} catch (InterruptedException ie) { }
+		// fire final copyProgress for full copy
+		fireCopyProgress(inFile, outFile, inFile.length()-partialSize, true);
+		if (cancelled) {
+			log.info("Simulation cancel occurred at completion of in progress file copy");
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Copy the given file to the given destination using the given buffer size.  
 	 * 
@@ -183,9 +214,10 @@ public class FileCopier {
 	 * @param overwrite		whether or not to overwrite if outFile already exists
 	 * @param makeDirectory	whether or not to make the parent directories if they do not already exist
 	 * @param progressListeners	any listeners wishing to be notifed of copy status
+	 * @return whether or not copy was completed (copy will not be completed if cancelled)
 	 * @throws IOException
 	 */
-	private void copyFileInternal(File inFile, File outFile, boolean overwrite, boolean makeDirectory) throws IOException {
+	private boolean copyFileInternal(File inFile, File outFile, boolean overwrite, boolean makeDirectory) throws IOException {
 		if (!inFile.exists()) {
 			throw new IOException("Source file does not exist.");
 		}
@@ -205,38 +237,30 @@ public class FileCopier {
 			}
 		}
 		if (outFile.isDirectory()) {
-			return;
+			return true;
 		}
 		FileChannel in = null;
 		FileChannel out = null;
 		try(FileInputStream fin = new FileInputStream(inFile); FileOutputStream fout = new FileOutputStream(outFile)) {
 			in = fin.getChannel();
 			out = fout.getChannel();
-			if (progressListeners == null) {
-				long size = in.size();
-				long pos = 0;
-				while (pos < size && !cancelled) {
-					pos += in.transferTo(pos, channelBufferSize, out);
-				}
-			} else {
-				long size = in.size();
-				long pos = 0;
-				while (pos < size && !cancelled) {
-					pos += in.transferTo(pos, channelBufferSize, out);
-					for (FileCopyProgressListener listener : progressListeners) {
-						listener.fileCopying(inFile, outFile, pos, pos >= size);
-					}
-				}
+			long size = in.size();
+			long pos = 0;
+			while (pos < size && !cancelled) {
+				pos += in.transferTo(pos, channelBufferSize, out);
+				fireCopyProgress(inFile, outFile, pos, pos >= size);
 			}
 		} catch (IOException ioe) {
 			throw ioe;
 		} finally {
 			close(in);
 			close(out);
-			if (cancelled) {
+			if (cancelled) { // don't care if it completed copy or not; cancel happened before finish so delete it regardless
 				outFile.delete();
+				return false;
 			}
 		}
+		return true;
 	}
 	
 	/**
@@ -386,6 +410,14 @@ public class FileCopier {
 		}
 	}
 	
+	private void fireCopyProgress(File from, File to, long bytesCopied, boolean copyComplete) {
+		if (progressListeners != null) {
+			for (FileCopyProgressListener listener : progressListeners) {
+				listener.fileCopying(from, to, bytesCopied, copyComplete);
+			}
+		}
+	}
+	
 	/**
 	 * Cancel the current copy operation; since the copy method is blocking, this call must be 
 	 * made by a thread that did not initiate the copy.
@@ -488,19 +520,20 @@ public class FileCopier {
 		} else {
 			try {
 				if (testMode) {
-					Thread.sleep(Math.min(3000, file.length()/10000));
+					copied = simulateCopyFileInternal(file, destFile);
 				} else {
-					copyFileInternal(file, destFile, overwrite, true);
+					copied = copyFileInternal(file, destFile, overwrite, true);
 				}
-				copiedFiles.add(destFile);
-				copied = true;
-				fireFileCopied(file, destFile, CopyResult.COPIED);
-				try {
-					if (!testMode) {
-						destFile.setLastModified(file.lastModified());
+				if (copied) {
+					copiedFiles.add(destFile);
+					fireFileCopied(file, destFile, CopyResult.COPIED);
+					try {
+						if (!testMode) {
+							destFile.setLastModified(file.lastModified());
+						}
+					} catch (Exception e) {
+						log.error("Unable to set last modified time on copied file " + destFile.getAbsolutePath());
 					}
-				} catch (Exception e) {
-					log.error("Unable to set last modified time on copied file " + destFile.getAbsolutePath());
 				}
 			} catch (Exception e) {
 				log.info("File copy error", e);
