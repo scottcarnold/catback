@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>CatBack User Guide</title>
+<style type="text/css">
+.heading {
+	text-align: center;
+}
+h3 {
+	border-bottom: 1px solid black;
+	background-color: #B0E0FF;
+	padding-left: 10px;
+}
+.toc {
+	font-size: 16pt;
+}
+.backupsteps li {
+	padding: 5px;
+}
+</style>
+</head>
+<body style="margin: 25px; font-size: 14pt;">
+<div class="heading">
+	<h1>CatBack User Guide</h1>
+	<h2>CatBack version 1.5</h2>
+</div>
+<h3>Contents</h3>
+<ul class="toc">
+	<li><a href="#s1">Introduction</a></li>
+	<li><a href="#s2">Managing a Backup</a></li>
+	<li><a href="#s3">Performing a Backup</a></li>
+	<li><a href="#s4">Restoring Files</a></li>
+	<li><a href="#s5">Dry Runs</a></li>
+	<li><a href="#s6">Logging</a></li>
+	<li><a href="#s7">Version History</a></li>
+	<li><a href="#s8">Requirements/Credits</a></li>
+</ul>
+<h3><a name="s1">Introduction</a></h3>
+<table style="font-size: 14pt" cellpadding="10"><tr><td>
+<a href="catback.png"><img src="catback-thumb.png" border="0" alt="CatBack main window" width="300" height="233"/></a>
+</td><td>
+<p>CatBack is a light-weight file backup program.  CatBack attempts to differentiate itself from other available backup software in the following ways:</p>
+<ol>
+<li>It is simple and easy to use.  Complex features simply aren't worth the trouble.</li>
+<li>Backup files are stored in a simple and easy to navigate directory structure.  Restoring files is not dependent on the backup software.</li>
+<li>It is easy to install.  No complicated install process, no databases, no hassle.</li>
+<li>It works on multiple platforms.</li>
+<li>It is small in size.</li>
+</ol>
+</td></tr></table>
+<p>CatBack keeps track of what files you want to back up by storing this information in a <i>Backup Profile</i>.  Backup Profiles operate much like documents in a word processor in that you can load them, save them, and create new ones.</p>
+<p>When you start CatBack for the first time, you will want to create a new Backup Profile by selecting
+<i>New</i> from the <i>File menu</i>.  Once this is done, you will be taken to a series of panels to enter
+your backup information.  Follow through each panel by clicking the navigation buttons at the bottom
+or by selecting the panels from the panel list on the left side of the screen.  The panels you will navigate
+through include:
+<ul>
+	<li>Summary - provides an overview of your backup, and contains the button to begin a new backup.</li>
+	<li>Name & Location - allows you to name your backup and select a location to backup to.</li>
+	<li>Backup Settings - includes settings to change the behavior of the backup process and how incremental backups are handled.</li>
+	<li>Included Files - provides a directory tree to select what directories and files will be backed up.</li>
+	<li>Excluded Files - provides a directory tree to select what subset of directories and files in the included set should be ignored.</li>
+</ul>
+When selecting your backup location, it is advised that you create and/or select an empty directory on another hard drive or network share.  Before you exit CatBack, you will need to save your Backup Profile (if you try to exit without saving your Backup Profile, you will be prompted to do so).</p>
+<p>As a convenience, CatBack will always reload the last Backup Profile on program startup.</p>
+<h3><a name="s2">Managing a Backup Profile</a></h3>
+<p>With your Backup Profile open, you can include or exclude files or directories to and from your backup set by checking or unchecking the checkboxes next to the files or directories on the included and excluded tabs.  Checkboxes in CatBack have three states to be aware of:</p>
+<ul>  <!--  list-style-image: url('tick.gif') -->
+	<li style="list-style-image: url('unchecked.png')"> An unchecked checkbox indicates that the file or directory will NOT be backed up (or NOT excluded, if on the Excluded tab).</li>
+	<li style="list-style-image: url('checked.png')"> A checked checkbox indicates that the file or directory WILL be backed up (or WILL be excluded, if on the Excluded tab).</li>
+	<li style="list-style-image: url('partialcheck.png')"> A checkbox in this state only occurs on directories, and it indicates that only some (but not all) files or directories beneath it will be backed up or excluded.</li>
+</ul>
+<p>In addition, the file names will have one of four different appearances:</p>
+<ul>
+	<li>bold blue text - for files to be included in the backup.</li>
+	<li>bold red text - for files to be excluded from the backup.</li>
+	<li>bold black text - for directories where one or more files beneath it are either included or excluded.</li>
+	<li>plain gray text - for all other files and directories.</li>
+</ul>
+<p>Excluded files and directories take precedence over included files and directories.  The purpose of
+being able to mark files and directories as excluded (and the difference from simply unchecking those
+files and directories from the Included tree), is so that you can exclude those files while keeping
+the parent directories in the checked state on the Included tree (rather than a paritially checked state).</p>
+<p>Pay attention to any selected files or directories that have icons with a warning or missing indicator.</p>
+<ul>
+	<li style="list-style-image: url('Symbols-Warning-16x16.png')"> When you see this warning indicator on top of a directory icon, it indicates that one or more files <b>beneath it</b> are missing.</li>
+	<li style="list-style-image: url('Symbols-Forbidden-16x16.png')"> When you see this missing indicator on top of a file or directory icon, it indicates that the file or directory is missing.</li>
+</ul>
+<p>You need only worry about the warning and missing indicators on files and directories that are part of your backup set.  When this occurs, it means the selected files or directories were previously added to your backup set but are no longer found at their previous locations.  Such files have generally either been deleted, renamed, or moved.  If the files are renamed or moved, you will need to manually uncheck them and then recheck them at their new locations; you may also want to manually update the directory structure at the backup location if you do not want the backup process to recopy such files.</p>
+<h3><a name="s3">Performing Backup of Files</a></h3>
+<p>Start your backup by clicking on the <i>Begin Backup</i> button on the Summary panel (you can also run a backup by using the "-b" command-line switch described later).  A backup consists of up to 6 steps.  For each step a progress bar may appear if the step will take a significant amount of time.  However, it is not uncommon for a step to be very quick and even skipped completely, in which case you will not see a progress bar for that step.  Once the backup is complete, a prompt will appear with a summary of the backup process.</p>
+<p>The backup steps are as follows:</p>
+<ol class="backupsteps">
+	<li><strong>Inspecting Files</strong>: A list of files you wish to backup is compiled.  This generally takes very little time.</li>
+	<li><strong>Inspecting Last Backup</strong>: A list of files from the last backup is compiled.  This can take some time if you have a large backup set and the connection to the backup location is slow.  This step can be skipped most of the time by by turning off the "Perform full scan of last backup" option in the preferences.</li>
+	<li><strong>Comparing Files</strong>: The two compiled lists of files are compared.  During this step, CatBack determines which files have changed and which files need to be backed up (any files that have not changed can be skipped). This can take some time if you have a large backup set and the connection to the backup location is slow.</li>
+	<li><strong>Removing Expired Incremental Backups</strong>:  Depending on your incremental backup settings, old incremental backup directories may be removed.</li>
+	<li><strong>Moving Old Files</strong>: Any changed or deleted files since the last backup are moved into another directory in the backup location.  (this provides an incremental backup; if no files have been deleted or moved, this step will be skipped and no incremental backup directory will be created.)</li>
+	<li><strong>Copying New/Changed Files</strong>: New and changed files are copied from your source drive(s) to the backup location.  This step opens an additional window which is initially minimized.  Pay attention if this window still exists after the backup is complete, as this means there was one or more problems copying files during the backup.  Switch to this window to see what the problems were and to decide what to do about those problems.  However, under normal circumstances, there will be no copy problems and this window will automatically close after the copy step is complete.</li>
+</ol>
+<p>When using the "-b" command line backup switch, a backup is immediately performed for the specified Backup Profile; if the backup completes normally, CatBack then exits.  This type of backup execution is intended to allow a user to schedule periodic backups using a task scheduler.  CatBack does not include a built-in scheduler, but most systems have their own task schedulers that can be used.  For example, if you have a Backup Profile with filename <i>c:\myfiles.catback</i>, you could have a task scheduler periodically run CatBack using a command like follows:</p>
+<pre style="margin-left: 25px;">java -jar catback.jar -b myfiles.catback</pre>
+<h3><a name="s4">Restoring Files</a></h3>
+<p>CatBack stores files in a simple directory structure that mimics the structure on the source drive(s)
+you backed up.  The backed up files are not compressed or changed in any way from their original
+versions.  This is done for simplicity.  Restoring files is as simple as navigating to the backup directory
+using your preferred file browser and copying the files back to your source drive.</p>
+<p>The directory structure of the backup location includes a directory named <i>latest</i> that stores the
+most recent backup, and zero or more incremental backup directories with dates for names.  When you perform
+a backup, all of the latest files go into the <i>latest</i> directory.  Any files have have been changed
+or deleted since the last backup are moved into the incremental backup directory with the current date
+as a directory name.  The incremental backup directories allow you to view and recover files from older
+backups if necessary.  In addition to the <i>latest</i> and incremental backup directories, there should
+also be a statistics file named ".catback_stats" in the backup directory; this file contains your backup history.</p>
+<p>As an example, assume you have a backup directory of <i>D:/backup</i>.  Assume you have performed two backups since the Backup Profile was created, and the second backup was performed on March 3, 2009, where one or more files had been changed or deleted.  In this case, you would have the following directory structure:</p>
+<i>D:/</i><br>
+&nbsp;&nbsp;&nbsp;'-- <i>backup/</i> (your chosen backup directory)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-- <i>.catback_stats</i> (backup history file)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-- <i>latest/</i> (directory where latest backup is stored)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'-- <i>20090303/</i> (directory where old and/or deleted files were moved to)<br>
+<p>You can configure how long to keep incremental backup directories for in your backup settings.  Or you can manage them yourself, simply by deleting incremental backup directories you no longer wish to keep.  If more than one backup is performed on the same day, subsequent incremental backup directories on that day will have an additional number appended to the directory name (i.e., if a second backup was performed on March 3, 2009, it might create the directory <i>20090303-1</i>).</p>
+
+<h3><a name="s5">Dry Runs</a></h3>
+<p>CatBack can be put into a "Dry Run" mode with the following command-line switch:</p>
+<p style="padding-left: 25px;">"-dryrun"</p>
+<p>In Dry Run mode, you can see what CatBack would do when launching a backup without having it actually perform the backup.  In effect, it will
+simulate any backup you run without actually copying, moving, or deleting any files to or from the backup location.  However, changes to the 
+backup settings will be applied like normal; only the execution of the backup is simulated.</p>
+
+<h3><a name="s6">Logging</a></h3>
+
+<p>Logging is configured via a log4j2.xml logging configuration file.  Normally, this file would reside in the application startup directory.
+This logging configuration file must be specified with a VM argument as in the following example:</p>
+<pre style="margin-left: 25px;">javaw -Dlog4j.configurationFile=file:\\\C:\CatBack\log4j2.xml -jar catback.jar</pre>
+<p>The default log4j2.xml configuration file will send log messages to the file "catback.log" located in the application startup directory.
+You can reroute logging in CatBack by adding one of the following command-line switches when starting the program:</p>
+<p style="padding-left: 25px;">"-l off" - turns off logging</p>
+<p style="padding-left: 25px;">"-l console" - sends logging messages to the console (note: you normally will not see console output if launching CatBack from a desktop shortcut or start menu)</p>
+<p style="padding-left: 25px;">"-l window" - sends logging messages to a dialog window within the application. When this is active, the dialog is launched from
+the Application Log menu item in the Window menu.</p>
+<p style="padding-left: 25px;">"-l file:<i>&lt;config-file-path&gt;</i>", where <i>config-file-path</i> is the file path of a standard log4j2.xml file.  Leave off the colon and <i>config-file-path</i> to reset to the default log4j2.xml confguration file.</p>
+<p>When using the -l flag, the log4j2.xml file is re-written to provide the desired logging configuration. To pick up the changes, the application must be restarted.</p>
+<h3><a name="s7">Version History</a></h3>
+<p>Detailed version history information is available through the Cat Back main menu (Help->About).</p>
+<h3><a name="s8">Requirements/Credits</a></h3>
+<p>CatBack is a Java application and requires Java 1.8 or later to operate.</p>
+<p>Testing on CatBack has only been performed under various versions of Windows and Mac OS X.  Linux platforms have been tested as backup locations only.
+CatBack has been designed to work with large backups, and has been successfully tested with backups as large as 100,000 files and totaling over 500 GB.</p>
+<p>Credits:</p>
+<div style="padding-left: 10px; padding-right: 5px">
+	<ul>
+		<li>
+			Author:
+				Scott Arnold
+
+		</li>
+		<li>
+			Contributor: Cari Arnold
+
+		</li>
+		<li>
+			Logging Engine:
+				<a href="https://logging.apache.org/log4j/2.x/">log4j 2.19</a>
+
+		</li>
+		<li>
+			Icons:
+				Glaze icons by Marco Martin
+
+		</li>
+		<li>
+			Textures:
+				Genetica Textures by Spiral Graphics
+
+		</li>
+		<li>
+			Bitwise File Compare Code:
+				Joe Orost
+
+		</li>
+		<li>
+			Java Version: 8 (1.8)
+
+		</li>
+	</ul>
+</div>
+
+<p style="font-size: 12pt;">* The file comparison code contributed by Joe Orost is for comparing  Backup Profiles only, to determine if the user should be prompted to save their Backup Profile before program exit.  It is not used for the actual backup process.  The backup file comparison process looks only at file length and modified date, whereas the code provided by Joe Orost does a thorough bitwise comparison.</p>
+<div style="font-size: 10pt; border-top: 1px solid black; text-align: right">
+CatBack v 1.5 - March 31, 2023
+</div>
+</body>
+</html>
