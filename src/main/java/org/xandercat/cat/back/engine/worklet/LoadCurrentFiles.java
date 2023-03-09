@@ -99,7 +99,7 @@ public class LoadCurrentFiles extends LoadFilesWorklet<Set<BackupFile>> {
 				totalFiles = filesSize.getFiles() + filesSize.getDirectories();
 			} else if (!directorySizeLoadStarted) {
 				directorySizeLoadStarted = true;
-				DirectorySizeCache.getInstance().loadDirectorySizeAnsync(backupDirectory);
+				DirectorySizeCache.getInstance().loadDirectorySizeAsync(backupDirectory);
 			}
 		} 
 		return totalFiles;

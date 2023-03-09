@@ -8,11 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xandercat.cat.back.engine.BackupEngine;
 import org.xandercat.cat.back.file.BackupPathGenerator;
-import org.xandercat.cat.back.file.FileCopier;
-import org.xandercat.cat.back.file.FileCopyListener;
-import org.xandercat.cat.back.file.FileCopyProgressListener;
-import org.xandercat.cat.back.swing.frame.FileCopyProcessFrame;
+import org.xandercat.swing.file.FileCopier;
+import org.xandercat.swing.file.FileCopyListener;
+import org.xandercat.swing.file.FileCopyProgressListener;
 import org.xandercat.swing.file.icon.FileIconCache;
+import org.xandercat.swing.frame.FileCopyProcessFrame;
 
 public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyListener, FileCopyProgressListener {
 

@@ -2,6 +2,8 @@ package org.xandercat.cat.back.file;
 
 import java.io.File;
 
+import org.xandercat.swing.file.FileCopierPathGenerator;
+
 /**
  * BackupPathGenerator generates paths to be used for files that will be backed up.  
  * 
