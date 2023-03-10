@@ -71,15 +71,14 @@ public class CatBackPanelHandler implements CatBackPanel {
 		catBackPanel.backupClosed();
 		this.inputValid = true;
 		this.inputProcessor = null;
+		this.inputNames.clear();
 	}
 
 	public List<String> backupOpened(BackupResources backupResources) throws ZenputException {
 		List<String> inputFields = catBackPanel.backupOpened(backupResources);
 		this.inputProcessor = backupResources.getInputProcessor();
 		if (inputFields != null) {
-			for (String fieldName : inputFields) {
-				this.inputNames.add(fieldName);
-			}
+			this.inputNames.addAll(inputFields);
 		}
 		return inputFields;
 	}
