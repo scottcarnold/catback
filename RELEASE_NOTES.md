@@ -19,13 +19,12 @@ Planned Release 3/31/2023
 + Updated appearance and revised counters on the copy process frame
 + Added command line flag for doing backup "dry runs" to be able to simulate backups without actually running them
 + Removed directory size cache debugging window and associated command line flag
-+ Fixed issue with file copy process step not always responding properly to cancel request
++ Fixed issues with backup process not always responding properly to cancel request
++ Fixed resource leak in file copier
++ Fixed bug where file could report as copied if cancelled mid-copy
 + Refactoring and removal of old code
 + Updated from Log4J to Log4J2
 + Due to the Log4J changes, the behavior of logging had to be revised. If you change the logging configuration with the -l flag, the changes will not take effect until the application is restarted.  In addition, if you set logging to "window", the logging window will now be opened via a menu item in the Window drop down menu.
-+ Fixed resource leak in file copier
-+ Fixed bug where file could report as copied if cancelled mid-copy
-+ Other minor bug fixes and optimizations
 + About dialog updated to use RELEASE_NOTES.md for content
 + Updated to latest Zenput release
 

@@ -116,7 +116,6 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 	
 	public boolean cancelCopy() {
 		if (copyFrame != null) {
-			// if there is a copier that actually gets cancelled, don't wait on copyComplete event to set copyCancelled flag; set it immediately.
 			this.copyCancelled = copyFrame.cancelCopyInProgress();
 		}
 		return this.copyCancelled;

@@ -26,11 +26,11 @@ public class CompareFiles extends BackupEngineWorklet<Boolean> {
 	private long bytesToCopy;
 	private long bytesToMove;
 	private boolean showMoveCopyDialog;
-	private volatile Boolean proceedToNextStep = Boolean.TRUE;
 	private FileIconCache fileIconCache;
 	private Frame parent;
 	private List<File> filesToCopy = new ArrayList<File>();
 	private List<BackupFile> filesToMove = new ArrayList<BackupFile>();
+	private volatile Boolean proceedToNextStep = Boolean.TRUE;
 	
 	public CompareFiles(BackupEngine backupEngine, List<BackupFile> currentFiles, List<BackupFile> previousFiles) {
 		super(backupEngine);

@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.apache.logging.log4j.LogManager;
@@ -180,6 +181,9 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 					backupFiles = null;
 				}
 			}
+			if (isCancelled()) {
+				return null;
+			}
 			if (scanLastBackup || backupFiles == null) {
 				this.loadBackupFiles = new LoadBackupFiles(this, excludedTree, backupDirectory, stats.getLatestStat());
 				if (dryRun) {
@@ -189,7 +193,9 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 				backupFiles = loadBackupFiles.execute();
 				this.backupSize = loadBackupFiles.getFilesSize();
 			}
-			
+			if (isCancelled()) {
+				return null;
+			}			
 			CompareFiles compareFiles = new CompareFiles(this, currentFiles, backupFiles);
 			if (dryRun) {
 				loadCurrentFiles.enableDryRun(DRY_RUN_PREFIX, speedFactor);
@@ -201,6 +207,9 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			if (!compareFiles.execute().booleanValue()) {
 				this.stat.setBackupStatus(BackupStatus.CANCELLED_BEFORE);
 				cancel(true);
+				return null;
+			}
+			if (isCancelled()) {
 				return null;
 			}
 			long bytesToMove = compareFiles.getBytesToMove();
@@ -217,11 +226,12 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 				publishStep(4, applyBackupLimits);
 				applyBackupLimits.execute();
 			}
-			
+			if (isCancelled()) {
+				return null;
+			}			
 			if (!dryRun) {
 				latestFileListFile.delete();  // file contents no longer valid once move/copy steps start
 			}
-			
 			if (filesToMove.size() > 0) {
 				this.moveFiles = new MoveFiles(this, filesToMove, filesToCopy, incrementalBackupDirectory);
 				if (dryRun) {
@@ -231,7 +241,9 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 				moveFiles.execute();
 				this.backupSize -= moveFiles.getFilesSize();
 			}
-			
+			if (isCancelled()) {
+				return null;
+			}
 			if (filesToCopy.size() > 0) {
 				this.copyFiles = new CopyFiles(this, filesToCopy, bytesToCopy, 
 						backupDirectory, fileIconCache, errorsUntilHalt);
@@ -279,48 +291,60 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 	@Override
 	protected void done() {
 		parent.removeCloseListener(this);
-		this.stat.setDateFinished(new Date());
-		this.stat.setBackupSize(this.backupSize);
-		if (this.stat.getBackupStatus() == null) {
-			this.stat.setBackupStatus(isCancelled()? BackupStatus.CANCELLED_DURING : BackupStatus.COMPLETED);
-		}
-		if (this.moveFiles != null) {
-			this.stat.setFilesMoved(moveFiles.getFilesMoved());
-			this.stat.setIncrementalBackupSize(moveFiles.getFilesSize());
-		}
-		if (this.copyFiles != null) {
-			this.stat.setFilesCopied(copyFiles.getFilesCopied());
-		}
-		try {
-			if (dryRun) {
-				log.info("Stats for dry run (will not be saved): " + stat.toString());
-			} else {
-				stats.addBackupStat(stat);
-				stats.saveStats(baseBackupDirectory);
-			}
-		} catch (IOException ioe) {
-			log.error("Unable to save backup stats.", ioe);
-		}
-		if (progressMonitor != null) {
-			progressMonitor.setVisible(false);
-		}
-		String backupStatus = copyCancelled? "Backup cancelled.  Some files were not backed up." : "Backup complete.";
-		if (this.stat.getBackupStatus() == BackupStatus.ERROR) {
-			backupStatus = "Backup process encountered an error.  See the log for details.";
-		}
-		if (dryRun) {
-			backupStatus = DRY_RUN_PREFIX + backupStatus;
-		}
-		if (!runQuiet) {
-			JOptionPane.showMessageDialog(parent, backupName + "\n" + backupStatus + "\nOlder files moved: " + this.stat.getFilesMoved() + "\nNewer files copied: " + this.stat.getFilesCopied());
-		}
-		if (listeners != null) {
-			for (BackupEngineListener listener : listeners) {
-				listener.backupEngineComplete(backupId, resolutionRequired, copyCancelled);
-			}
-			listeners = null;
-		}
 		this.active = false;
+		new Thread(() -> {
+			// performed in separate thread in case it needs to wait on completion of anything
+			this.stat.setDateFinished(new Date());
+			this.stat.setBackupSize(this.backupSize);
+			if (this.stat.getBackupStatus() == null) {
+				this.stat.setBackupStatus(isCancelled()? BackupStatus.CANCELLED_DURING : BackupStatus.COMPLETED);
+			}
+			if (this.moveFiles != null) {
+				this.stat.setFilesMoved(moveFiles.getFilesMoved());
+				this.stat.setIncrementalBackupSize(moveFiles.getFilesSize());
+			}
+			if (this.copyFiles != null) {
+				while (!copyFiles.isCopyComplete()) { // need to wait on CopyFiles worklet to fully complete
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+					}
+				}
+				this.stat.setFilesCopied(copyFiles.getFilesCopied());
+			}
+			try {
+				if (dryRun) {
+					log.info("Stats for dry run (will not be saved): " + stat.toString());
+				} else {
+					stats.addBackupStat(stat);
+					stats.saveStats(baseBackupDirectory);
+				}
+			} catch (IOException ioe) {
+				log.error("Unable to save backup stats.", ioe);
+			}
+			if (progressMonitor != null) {
+				progressMonitor.setVisible(false);
+			}
+			String backupStatus = copyCancelled? "Backup cancelled.  Some files were not backed up." : "Backup complete.";
+			if (this.stat.getBackupStatus() == BackupStatus.ERROR) {
+				backupStatus = "Backup process encountered an error.  See the log for details.";
+			}
+			if (dryRun) {
+				backupStatus = DRY_RUN_PREFIX + backupStatus;
+			}
+			final String backupStatusString = backupStatus;
+			SwingUtilities.invokeLater(() -> {
+				if (!runQuiet) {
+					JOptionPane.showMessageDialog(parent, backupName + "\n" + backupStatusString + "\nOlder files moved: " + this.stat.getFilesMoved() + "\nNewer files copied: " + this.stat.getFilesCopied());
+				}
+				if (listeners != null) {
+					for (BackupEngineListener listener : listeners) {
+						listener.backupEngineComplete(backupId, resolutionRequired, copyCancelled);
+					}
+					listeners = null;
+				}					
+			});
+		}).start();
 	}
 
 	@Override
