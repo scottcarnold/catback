@@ -58,6 +58,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 				FileIconCache fileIconCache = ResourceManager.getInstance().getResource(FileIconCache.class);
 				BackupEngine backupEngine = new BackupEngine(catBackFrame, backup, fileIconCache, excludedTree, stats);
 				backupEngine.setDryRun(BackupEngineManager.this.dryRun);
+				backupEngine.setDryRunSpeedFactor(speedFactor);
 				backupEngine.addBackupEngineListener(this);
 				for (BackupEngineListener listener : backupEngineListeners) {
 					backupEngine.addBackupEngineListener(listener);
@@ -87,6 +88,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 	private BeginBackupAction beginBackupAction;
 	private final Set<BackupEngineListener> backupEngineListeners = new HashSet<BackupEngineListener>();
 	private boolean dryRun;
+	private Long speedFactor;
 	
 	public BackupEngineManager(CatBackFrame catBackFrame, FileManager<CatBackup15> backupFileManager) {
 		this.catBackFrame = catBackFrame;
@@ -118,6 +120,10 @@ public class BackupEngineManager implements FileManagerListener<CatBackup15>{
 		this.dryRun = dryRun;
 	}
 
+	public void setDryRunSpeedFactor(Long speedFactor) {
+		this.speedFactor = speedFactor;
+	}
+	
 	/**
 	 * Returns an action that can be used to initiate backup.
 	 * 

@@ -13,7 +13,7 @@ public abstract class BackupEngineWorklet<T> extends SwingWorklet<T, String> {
 
 	public abstract String getTitle();
 	
-	public abstract void enableDryRun(String dryRunPrefix);
+	public abstract void enableDryRun(String dryRunPrefix, Long speedFactor);
 	
 	protected void advanceProgress(long progressBy) {
 		this.progress += progressBy;

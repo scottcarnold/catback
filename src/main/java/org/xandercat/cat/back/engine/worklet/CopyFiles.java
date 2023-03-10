@@ -33,6 +33,7 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 	private boolean copyComplete;
 	private int errorsUntilHalt;
 	private boolean dryRun;
+	private Long speedFactor;
 	private String dryRunPrefix = "";
 	
 	public CopyFiles(BackupEngine backupEngine, List<File> filesToCopy, long bytesToCopy, 
@@ -45,9 +46,10 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 		this.errorsUntilHalt = errorsUntilHalt;
 	}
 
-	public void enableDryRun(String dryRunPrefix) {
+	public void enableDryRun(String dryRunPrefix, Long speedFactor) {
 		this.dryRun = true;
 		this.dryRunPrefix = dryRunPrefix;
+		this.speedFactor = speedFactor;
 	}
 	
 	@Override
@@ -68,7 +70,11 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 		this.copyFrame.addFileCopyListener(this);
 		this.copyFrame.addFileCopyProgressListener(this);
 		if (dryRun) {
-			this.copyFrame.enableTestMode();
+			if (speedFactor == null) {
+				this.copyFrame.enableTestMode();
+			} else {
+				this.copyFrame.enableTestMode(speedFactor.longValue());
+			}
 		}
 		this.countDownLatch = new CountDownLatch(1); 
 		this.copyFrame.copy();

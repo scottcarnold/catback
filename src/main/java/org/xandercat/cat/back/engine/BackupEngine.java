@@ -78,6 +78,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 	private CopyFiles copyFiles;
 	private long backupSize;  // used to hold size of backup to be saved in backup stat when done
 	private boolean dryRun;
+	private Long speedFactor;
 	private boolean active;
 	
 	public BackupEngine(ApplicationFrame parent, 
@@ -146,6 +147,10 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 		this.dryRun = dryRun;
 	}
 	
+	public void setDryRunSpeedFactor(Long speedFactor) {
+		this.speedFactor = speedFactor;
+	}
+	
 	@Override
 	protected Void doInBackground() throws Exception {
 		this.active = true;
@@ -158,7 +163,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			
 			LoadCurrentFiles loadCurrentFiles = new LoadCurrentFiles(this, excludedTree, currentFilesAndDirectories, backupDirectory);
 			if (dryRun) {
-				loadCurrentFiles.enableDryRun(DRY_RUN_PREFIX);
+				loadCurrentFiles.enableDryRun(DRY_RUN_PREFIX, speedFactor);
 			}
 			publishStep(1, loadCurrentFiles);
 			List<BackupFile> currentFiles = loadCurrentFiles.execute();		
@@ -178,7 +183,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			if (scanLastBackup || backupFiles == null) {
 				this.loadBackupFiles = new LoadBackupFiles(this, excludedTree, backupDirectory, stats.getLatestStat());
 				if (dryRun) {
-					loadBackupFiles.enableDryRun(DRY_RUN_PREFIX);
+					loadBackupFiles.enableDryRun(DRY_RUN_PREFIX, speedFactor);
 				}
 				publishStep(2, loadBackupFiles);
 				backupFiles = loadBackupFiles.execute();
@@ -187,7 +192,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			
 			CompareFiles compareFiles = new CompareFiles(this, currentFiles, backupFiles);
 			if (dryRun) {
-				loadCurrentFiles.enableDryRun(DRY_RUN_PREFIX);
+				loadCurrentFiles.enableDryRun(DRY_RUN_PREFIX, speedFactor);
 			}
 			publishStep(3, compareFiles);
 			if (showMoveCopyDialog && !runQuiet) {
@@ -207,7 +212,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 				ApplyIncrementalBackupLimits applyBackupLimits = new ApplyIncrementalBackupLimits(this, 
 						baseBackupDirectory, keepAtLeastTime, keepNoMoreThanTime, keepNoMoreThanBytes, bytesToMove);
 				if (dryRun) {
-					applyBackupLimits.enableDryRun(DRY_RUN_PREFIX);
+					applyBackupLimits.enableDryRun(DRY_RUN_PREFIX, speedFactor);
 				}
 				publishStep(4, applyBackupLimits);
 				applyBackupLimits.execute();
@@ -220,7 +225,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			if (filesToMove.size() > 0) {
 				this.moveFiles = new MoveFiles(this, filesToMove, filesToCopy, incrementalBackupDirectory);
 				if (dryRun) {
-					moveFiles.enableDryRun(DRY_RUN_PREFIX);
+					moveFiles.enableDryRun(DRY_RUN_PREFIX, speedFactor);
 				}
 				publishStep(5, moveFiles);
 				moveFiles.execute();
@@ -232,7 +237,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 						backupDirectory, fileIconCache, errorsUntilHalt);
 				this.copyFiles.setAlwaysLeaveCopyWindowOpen(this.leaveCopyWindowOpen);
 				if (dryRun) {
-					this.copyFiles.enableDryRun(DRY_RUN_PREFIX);
+					this.copyFiles.enableDryRun(DRY_RUN_PREFIX, speedFactor);
 				}
 				publishStep(6, copyFiles);
 				boolean haltedDueToErrors = copyFiles.execute();

@@ -37,7 +37,7 @@ public class MoveFiles extends BackupEngineWorklet<Void> {
 	}
 
 	@Override
-	public void enableDryRun(String dryRunPrefix) {
+	public void enableDryRun(String dryRunPrefix, Long speedFactor) {
 		this.dryRun = true;
 		this.dryRunPrefix = dryRunPrefix;
 	}

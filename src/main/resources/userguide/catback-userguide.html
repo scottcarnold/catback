@@ -126,6 +126,10 @@ also be a statistics file named ".catback_stats" in the backup directory; this f
 <p>In Dry Run mode, you can see what CatBack would do when launching a backup without having it actually perform the backup.  In effect, it will
 simulate any backup you run without actually copying, moving, or deleting any files to or from the backup location.  However, changes to the 
 backup settings will be applied like normal; only the execution of the backup is simulated.</p>
+<p>The simulated speed of copying each file can be changed with additional command-line argument:</p>
+<p style="padding-left: 25px;">"-speed <i>&lt;speed-factor&gt;</i>"</p>
+<p>The simulated time to copy a file will be equal to, in milliseconds, the size of the file in bytes / <i>speed-factor</i>. 
+However, there is also a set maximum simulated copy time of 6 seconds for each file.  The default <i>speed-factor</i> value is 10000.</p>
 
 <h3><a name="s6">Logging</a></h3>
 

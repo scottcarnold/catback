@@ -585,9 +585,10 @@ public class CatBackFrame extends ApplicationFrame implements
 		log.info("Backup " + backup.getName() + " loaded.");
 	}
 	
-	public void setDryRun(boolean dryRun) {
+	public void setDryRun(boolean dryRun, Long speedFactor) {
 		final String dryRunText = " [DRY RUN]";
 		BackupEngineManager bem = ResourceManager.getInstance().getResource(BackupEngineManager.class);
+		bem.setDryRunSpeedFactor(speedFactor);
 		if (dryRun == bem.isDryRun()) {
 			return;
 		}

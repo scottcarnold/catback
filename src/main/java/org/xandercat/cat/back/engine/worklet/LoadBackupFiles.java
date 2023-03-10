@@ -29,7 +29,7 @@ public class LoadBackupFiles extends LoadFilesWorklet<List<BackupFile>> {
 	}
 
 	@Override
-	public void enableDryRun(String dryRunPrefix) {
+	public void enableDryRun(String dryRunPrefix, Long speedFactor) {
 		// no action required
 	}
 

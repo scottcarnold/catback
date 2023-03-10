@@ -40,6 +40,7 @@ public class CatBack {
 	public static final String LOG_KEY = "-l";
 	public static final String IMMEDIATE_BACKUP_KEY = "-b";
 	public static final String DRY_RUN_KEY = "-dryrun";
+	public static final String DRY_RUN_SPEED_KEY = "-speed";
 	
 	private static final Logger log = LogManager.getLogger(CatBack.class);
 	
@@ -50,6 +51,7 @@ public class CatBack {
 		argumentProcessor.addValidSwitchValuePair(IMMEDIATE_BACKUP_KEY, "<filename>", "Backup the given Backup Profile", null);
 		LoggingConfigurer.addArgumentProcessorSwitchValuePair(argumentProcessor, LOG_KEY);
 		argumentProcessor.addValidSwitch(DRY_RUN_KEY, "Execute backups as simulations without actually updating the file systems.");
+		argumentProcessor.addValidSwitchValuePair(DRY_RUN_SPEED_KEY, "<number>", "Speed factor that impacts simulated file copy time.", "^[\\d]*$");
 		argumentProcessor.process(args);
 		if (LoggingConfigurer.configureLogging(argumentProcessor, LOG_KEY, Level.INFO, LoggingConfigurer.Target.FILE, "catback.log")) {
 			log.info("Logging configuration updated.  Application will need to be restarted for changes to take effect.");
@@ -57,6 +59,13 @@ public class CatBack {
 		PlatformTool.setApplicationNameOnMac(APPLICATION_NAME);
 		final String backupFilename = argumentProcessor.getValueForSwitch(IMMEDIATE_BACKUP_KEY);
 		final boolean dryRun = argumentProcessor.isSwitchPresent(DRY_RUN_KEY);
+		String dryRunSpeedFactorValue = argumentProcessor.getValueForSwitch(DRY_RUN_SPEED_KEY);
+		final Long dryRunSpeedFactor;
+		if (dryRunSpeedFactorValue != null && dryRunSpeedFactorValue.length() > 0) {
+			dryRunSpeedFactor = Long.valueOf(dryRunSpeedFactorValue);
+		} else {
+			dryRunSpeedFactor = null;
+		}
 
 		// load application settings
 		Object settingsObject = null;
@@ -101,7 +110,7 @@ public class CatBack {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				if (backupFilename == null) {
-					launchUI(settings, dryRun);
+					launchUI(settings, dryRun, dryRunSpeedFactor);
 				} else {
 					launchImmediateBackup(backupFilename);
 				}
@@ -109,10 +118,10 @@ public class CatBack {
 		}); 
 	}
 
-	private static void launchUI(CatBackSettings settings, boolean dryRun) {
+	private static void launchUI(CatBackSettings settings, boolean dryRun, Long dryRunSpeedFactor) {
 		CatBackFrame ui = new CatBackFrame(APPLICATION_NAME, APPLICATION_VERSION, settings);
 		if (dryRun) { 
-			ui.setDryRun(dryRun);
+			ui.setDryRun(dryRun, dryRunSpeedFactor);
 		}
 		ui.setVisible(true);
 	}

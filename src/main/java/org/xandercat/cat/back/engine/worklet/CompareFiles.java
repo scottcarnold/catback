@@ -45,7 +45,7 @@ public class CompareFiles extends BackupEngineWorklet<Boolean> {
 	}
 
 	@Override
-	public void enableDryRun(String dryRunPrefix) {
+	public void enableDryRun(String dryRunPrefix, Long speedFactor) {
 		// no action required
 	}
 
