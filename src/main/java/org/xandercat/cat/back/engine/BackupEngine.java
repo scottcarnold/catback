@@ -43,8 +43,8 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 	private static final String DRY_RUN_PREFIX = "[DRY RUN / SIMULATED] ";
 	
 	public static final String LATEST_BACKUP_DIR_NAME = "latest";
-	public static final String LATEST_FILE_LIST_FILE_NAME = ".cb_filelist";
-	public static final String INCREMENTAL_SIZE_FILE_NAME = ".cb_size";
+	public static final String LATEST_FILE_LIST_FILE_NAME = ".catback_filelist";
+	public static final String INCREMENTAL_SIZE_FILE_NAME = ".catback_isize";
 	public static final String INCREMENTAL_BACKUP_DIR_NAME_DATE_PATTERN = "yyyyMMdd";
 	public static final String INCREMENTAL_BACKUP_DIR_NAME_REGEX_PATTERN = "[\\d]{8}|[\\d]{8}[-][\\d]{1,4}";
 	public static final String STATS_FILENAME = "backup.txt";
