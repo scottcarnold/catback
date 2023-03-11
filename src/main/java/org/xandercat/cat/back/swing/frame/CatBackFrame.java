@@ -3,7 +3,6 @@ package org.xandercat.cat.back.swing.frame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -48,6 +47,7 @@ import org.xandercat.cat.back.engine.BackupStats;
 import org.xandercat.cat.back.importer.OldBackupImporter;
 import org.xandercat.cat.back.media.Icons;
 import org.xandercat.cat.back.media.Images;
+import org.xandercat.cat.back.media.UserGuide;
 import org.xandercat.cat.back.swing.dialog.BackupHistoryDialog;
 import org.xandercat.cat.back.swing.panel.BackupResources;
 import org.xandercat.cat.back.swing.panel.CatBackPanelHandler;
@@ -419,7 +419,7 @@ public class CatBackFrame extends ApplicationFrame implements
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try {
-					Desktop.getDesktop().browse(CatBackSettings.USERGUIDE_FILE.toURI());
+					UserGuide.display();
 				} catch (Exception e) {
 					errorPrompt("Unable to launch user guide.", e);
 				}

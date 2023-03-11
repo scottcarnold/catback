@@ -19,7 +19,6 @@ public class CatBackSettings implements Serializable {
 	public static final int MAX_RECENTLY_LOADED_FILES = 5;
 	public static final File SETTINGS_FILE = new File("catback_settings.dat");
 	public static final File TREESTATES_FILE = new File("catback_trees.dat");
-	public static final File USERGUIDE_FILE = new File("config/cat/catback-userguide.html");
 	public static final String BACKUP_STATS_FILE_NAME = ".catback_stats";
 	
 	private List<File> recentlyLoadedFiles = new ArrayList<File>();
