@@ -151,14 +151,15 @@ However, there is also a set maximum simulated copy time of 6 seconds for each f
 
 <h3><a name="s6">Logging</a></h3>
 
-<p>Logging is configured via a log4j2.xml logging configuration file.  Normally, this file would reside in the application startup directory.</p>
+<p>Logging is configured via a log4j2.xml logging configuration file.  Normally, this file would reside in the application startup directory.
+If you start CatBack without this file present, it will automatically be created, but will not take effect until the next time CatBack is started.</p>
 <p>The default log4j2.xml configuration file will send log messages to the file "catback.log" located in the application startup directory.
 You can reroute logging in CatBack by adding one of the following command-line switches when starting the program:</p>
 <p style="padding-left: 25px;">"-l off" - turns off logging</p>
 <p style="padding-left: 25px;">"-l console" - sends logging messages to the console (note: you normally will not see console output if launching CatBack from a desktop shortcut or start menu)</p>
 <p style="padding-left: 25px;">"-l window" - sends logging messages to a dialog window within the application. When this is active, the dialog is launched from
 the Application Log menu item in the Window menu.</p>
-<p style="padding-left: 25px;">"-l file:<i>&lt;config-file-path&gt;</i>", where <i>config-file-path</i> is the file path of a standard log4j2.xml file.  Leave off the colon and <i>config-file-path</i> to reset to the default log4j2.xml confguration file.</p>
+<p style="padding-left: 25px;">"-l file:<i>&lt;log-file-path&gt;</i>", where <i>log-file-path</i> is the file path and name of the log file.  Leave off the colon and <i>log-file-path</i> to reset to the default log file.</p>
 <p>When using the -l flag, the log4j2.xml file is re-written to provide the desired logging configuration. To pick up the changes, the application must be restarted.
 If you are familiar with log4j2 configuration files, you can also manually modify the configuration to your own liking.</p>
 <h3><a name="s7">Version History</a></h3>
