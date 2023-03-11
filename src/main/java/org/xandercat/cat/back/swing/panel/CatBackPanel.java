@@ -29,6 +29,8 @@ public interface CatBackPanel {
 	
 	public void panelActivating();
 	
+	public void panelActivated();
+	
 	public void panelDeactivating();
 	
 	public JComponent getComponent();

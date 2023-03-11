@@ -171,6 +171,11 @@ public class NameLocationPanel implements CatBackPanel, ActionListener, FileTabl
 	}
 
 	@Override
+	public void panelActivated() {
+		// no action required
+	}
+
+	@Override
 	public void panelDeactivating() {
 		// no action required
 	}

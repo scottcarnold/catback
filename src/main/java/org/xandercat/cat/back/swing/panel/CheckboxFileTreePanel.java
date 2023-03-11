@@ -92,6 +92,11 @@ public class CheckboxFileTreePanel implements CatBackPanel, BackupSizeListener, 
 	}
 	
 	@Override
+	public void panelActivated() {
+		// no action required	
+	}
+
+	@Override
 	public void panelDeactivating() {
 		// no action required	
 	}

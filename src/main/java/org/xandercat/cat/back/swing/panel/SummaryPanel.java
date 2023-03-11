@@ -203,6 +203,11 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 	}
 	
 	@Override
+	public void panelActivated() {
+		// no action required
+	}
+
+	@Override
 	public void panelDeactivating() {
 		// no action required
 	}

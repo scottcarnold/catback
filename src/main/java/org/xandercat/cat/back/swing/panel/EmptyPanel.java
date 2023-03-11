@@ -86,6 +86,11 @@ public class EmptyPanel extends DesignerPanel implements CatBackPanel {
 	}
 
 	@Override
+	public void panelActivated() {
+		// no action required
+	}
+
+	@Override
 	public void panelDeactivating() {
 		// no action required
 	}

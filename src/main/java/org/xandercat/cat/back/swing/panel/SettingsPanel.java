@@ -123,6 +123,11 @@ public class SettingsPanel implements CatBackPanel, ItemListener {
 	}
 
 	@Override
+	public void panelActivated() {
+		// no action required
+	}
+
+	@Override
 	public void panelDeactivating() {
 		// no action required
 	}

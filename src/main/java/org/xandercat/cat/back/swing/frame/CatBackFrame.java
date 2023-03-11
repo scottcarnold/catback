@@ -675,6 +675,8 @@ public class CatBackFrame extends ApplicationFrame implements
 		this.navNextButton.setEnabled(panelHandler.isNavForwardAvailable());
 		this.navNextButton.setVisible(panelHandler.isNavForwardAvailable());
 		this.navNextButton.setText(panelHandler.getNavForwardText());
+		
+		panelHandler.panelActivated();
 	}
 
 	@Override
