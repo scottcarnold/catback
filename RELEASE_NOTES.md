@@ -2,8 +2,8 @@
 
 CatBack is a simple system backup utility.
 
-+ Author: Scott C Arnold
-+ Contributor: Cari R Bryant Arnold
++ Author: Scott Arnold
++ Contributor: Cari Arnold
 + Icons: Glaze icons by Marco Martin
 + Textures: Genetica Textures by Spiral Graphics
 + Bitwise File Compare Code: Joe Orost
