@@ -63,6 +63,25 @@ through include:
 </ul>
 When selecting your backup location, it is advised that you create and/or select an empty directory on another hard drive or network share.  Before you exit CatBack, you will need to save your Backup Profile (if you try to exit without saving your Backup Profile, you will be prompted to do so).</p>
 <p>As a convenience, CatBack will always reload the last Backup Profile on program startup.</p>
+<h4>Running CatBack</h4>
+<p>There are three ways to run cat back:
+<ul>
+<li>Run the jar:  To do this, you need the catback jar file along with the jars of all CatBack dependencies in the same folder.  You also need to specify the VM argument for the log4j2 configuration file.  
+The required dependencies include <a href="https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.19.0/log4j-api-2.19.0.jar">log4j-api-2.19.0</a>, 
+<a href="https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.19.0/log4j-core-2.19.0.jar">log4j-core-2.19.0</a>, 
+<a href="https://repo1.maven.org/maven2/org/markdownj/markdownj-core/0.4/markdownj-core-0.4.jar">markdownj-core-0.4</a>, 
+<a href="https://github.com/scottcarnold/catswing/releases/download/catswing-1.0.5/catswing-1.0.5.jar">catswing-1.0.5</a>, 
+<a href="https://github.com/scottcarnold/zenput/releases/download/zenput-1.0.1/zenput-1.0.1.jar">zenput-1.0.1</a>, 
+and, for non Mac systems, <a href="https://github.com/scottcarnold/applestub/releases/download/applestub-1.0.0/applestub-1.0.0.jar">applestub-1.0.0</a>.</li>
+<pre style="margin-left: 25px;">javaw -Dlog4j.configurationFile=file:\\\C:\CatBack\log4j2.xml -jar catback-1.5.0.jar</pre>
+<li>Run the "fat jar":  A "fat jar" has all dependencies packaged within a single jar.  You no longer need to worry about other dependencies with this approach, but you will still need to specify the VM argument if you want logging to work.</li>
+<pre style="margin-left: 25px;">javaw -Dlog4j.configurationFile=file:\\\C:\CatBack\log4j2.xml -jar catback-1.5.0-jar-with-dependencies.jar</pre>
+<li>Run the executable:  The CatBack build uses Launch4J to build an executable version of CatBack that can be used on Windows systems.  You no longer have to specify the VM argument
+for the log configuration file, but you still need Java 1.8 or later installed on your system.  The exe is essentially a wrapper around the CatBack fat jar and is the easiest way to run CatBack, but because the exe file is not signed with a certificate issued by a common certificate authority, 
+it should be noted that some virus scanning software may flag it as suspicious or as a threat.</li>
+<pre style="margin-left: 25px;">catback.exe</pre>
+</ul>
+
 <h3><a name="s2">Managing a Backup Profile</a></h3>
 <p>With your Backup Profile open, you can include or exclude files or directories to and from your backup set by checking or unchecking the checkboxes next to the files or directories on the included and excluded tabs.  Checkboxes in CatBack have three states to be aware of:</p>
 <table style="font-size: 14pt" cellpadding="10"><tr><td>

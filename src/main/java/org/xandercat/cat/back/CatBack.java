@@ -1,7 +1,9 @@
 package org.xandercat.cat.back;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -55,7 +57,18 @@ public class CatBack {
 		argumentProcessor.addValidSwitchValuePair(DRY_RUN_SPEED_KEY, "[speed-factor]", "Numeric value (default 10000) that impacts simulated file copy time for dry runs", "^[\\d]*$");
 		argumentProcessor.process(args);
 		if (LoggingConfigurer.configureLogging(argumentProcessor, LOG_KEY, Level.INFO, LoggingConfigurer.Target.FILE, "catback.log")) {
-			log.info("Logging configuration updated.  Application will need to be restarted for changes to take effect.");
+			try {
+				SwingUtilities.invokeAndWait(() -> {
+					JOptionPane.showMessageDialog(null, 
+							"Logging configuration has been updated.  Application will need to be restarted.", 
+							APPLICATION_NAME + " " + APPLICATION_VERSION, 
+							JOptionPane.WARNING_MESSAGE);
+					System.exit(0);
+				});
+			} catch (Exception e) {
+				log.error("Error attempting to inform user of logging configuration change.", e);
+				System.exit(-1);
+			} 
 		} 
 		PlatformTool.setApplicationNameOnMac(APPLICATION_NAME);
 		final String backupFilename = argumentProcessor.getValueForSwitch(IMMEDIATE_BACKUP_KEY);
