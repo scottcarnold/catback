@@ -109,7 +109,11 @@ public class MoveFiles extends BackupEngineWorklet<Void> {
 		// cache the size of the incremental directory
 		File sizeFile = new File(incrementalBackupDirectory, BackupEngine.INCREMENTAL_SIZE_FILE_NAME);
 		try {
-			FileManager.saveObject(sizeFile, Long.valueOf(filesSize));
+			if (dryRun) {
+				log.info(dryRunPrefix + " skipping creation of incremental directory file: " + sizeFile.getAbsolutePath());
+			} else {
+				FileManager.saveObject(sizeFile, Long.valueOf(filesSize));
+			}
 		} catch (Exception e) {
 			log.warn("Unable to save incremental backup size to file: " + sizeFile.getAbsolutePath());
 		}
