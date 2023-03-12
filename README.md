@@ -4,7 +4,7 @@ CatBack is a simple system back utility.  It allows for selecting included and e
 
 At present, CatBack relies on an external Log4j2 configuration file located at the root of the application.  To pick it up, CatBack needs to be run with VM argument: -Dlog4j.configurationFile=file:[path-to-CatBack]\log4j2.xml. Example:
 
-	java -Dlog4j.configurationFile=file:\\\C:\CatBack\Log4j2.xml -jar catback.jar
+	java -Dlog4j.configurationFile=file:\\\C:\CatBack\Log4j2.xml -jar catback-1.5.0-jar-with-dependencies.jar
 
 If using the executable version, this argument is not required.  However, the executable version may cause false positives with some virus scanning software, as the executable version is not signed with a certificate issued by a certificate authority:
 
