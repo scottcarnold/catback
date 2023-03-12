@@ -81,6 +81,7 @@ public class ImmediateFileBackupFrame extends ApplicationFrame implements Backup
 				backupEngine.setDryRun(dryRun);
 				backupEngine.setDryRunSpeedFactor(dryRunSpeedFactor);
 				backupEngine.setRunQuiet(true);
+				log.info("Launching immediate backup: " + backupProfileFilename);
 				SwingWorkerUtil.execute(backupEngine);
 			} catch (Exception e) {
 				log.error("Backup could not be completed.", e);
