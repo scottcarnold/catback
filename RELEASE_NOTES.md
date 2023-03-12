@@ -10,7 +10,7 @@ CatBack is a simple system backup utility.
 + Java Version: 1.8
 
 # CatBack 1.5 Release Notes
-Planned Release 3/31/2023
+Released 3/12/2023
 ## Build
 + Updated to use Maven build system
 + Updated Java version from 1.6 to 1.8
