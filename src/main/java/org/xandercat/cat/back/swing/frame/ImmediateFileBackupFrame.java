@@ -1,9 +1,12 @@
 package org.xandercat.cat.back.swing.frame;
 
+import java.awt.FlowLayout;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,14 +35,25 @@ public class ImmediateFileBackupFrame extends ApplicationFrame implements Backup
 
 	private static final long serialVersionUID = 2009032701L;
 	private static final Logger log = LogManager.getLogger(ImmediateFileBackupFrame.class);
+	private boolean dryRun;
+	private Long dryRunSpeedFactor;
 	
 	private String backupProfileFilename;
 	
 	public ImmediateFileBackupFrame(String applicationName, String applicationVersion, String backupProfileFilename) {
 		super(applicationName, applicationVersion);
 		this.backupProfileFilename = backupProfileFilename;
-		setSize(300, 50);
+		JPanel panel = new JPanel(new FlowLayout());
+		JLabel label = new JLabel("Running backup: " + backupProfileFilename);
+		panel.add(label);
+		setContentPane(panel);
+		pack();
 		setLocation(0, 0);
+	}
+	
+	public void setDryRun(boolean dryRun, Long dryRunSpeedFactor) {
+		this.dryRun = dryRun;
+		this.dryRunSpeedFactor = dryRunSpeedFactor;
 	}
 	
 	@Override
@@ -61,22 +75,17 @@ public class ImmediateFileBackupFrame extends ApplicationFrame implements Backup
 						excludedTree.selectAddFile(bfile, backup.wasDirectory(bfile), true);
 					}
 				}			
-				BackupStats stats = null;
-				try {
-					stats = new BackupStats(backup.getBackupDirectory());
-				} catch (Exception e) {
-					log.error("Error while attempting to load prior backup statistics.", e);
-					//TODO: Consider possibly prompting user for what to do or maybe just exiting with error code.
-					stats = new BackupStats();
-				}
+				BackupStats stats = new BackupStats(backup.getBackupDirectory());
 				BackupEngine backupEngine = new BackupEngine(this, backup, fileIconCache, excludedTree, stats);
 				backupEngine.addBackupEngineListener(this);
+				backupEngine.setDryRun(dryRun);
+				backupEngine.setDryRunSpeedFactor(dryRunSpeedFactor);
 				backupEngine.setRunQuiet(true);
 				SwingWorkerUtil.execute(backupEngine);
 			} catch (Exception e) {
 				log.error("Backup could not be completed.", e);
 				JOptionPane.showMessageDialog(this, 
-						"Unable to perform backup.\n", 
+						"Unable to perform backup.\n" + e.getMessage(), 
 						"Backup Error", JOptionPane.ERROR_MESSAGE);
 				backupEngineComplete(null, false, false);
 			}

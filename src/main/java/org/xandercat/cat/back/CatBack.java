@@ -126,7 +126,7 @@ public class CatBack {
 				if (backupFilename == null) {
 					launchUI(settings, dryRun, dryRunSpeedFactor);
 				} else {
-					launchImmediateBackup(backupFilename);
+					launchImmediateBackup(backupFilename, dryRun, dryRunSpeedFactor);
 				}
 			}
 		}); 
@@ -140,8 +140,11 @@ public class CatBack {
 		ui.setVisible(true);
 	}
 	
-	public static void launchImmediateBackup(String backupProfileFilename) {
+	public static void launchImmediateBackup(String backupProfileFilename, boolean dryRun, Long dryRunSpeedFactor) {
 		ImmediateFileBackupFrame ui = new ImmediateFileBackupFrame(APPLICATION_NAME, APPLICATION_VERSION, backupProfileFilename);
+		if (dryRun) {
+			ui.setDryRun(dryRun, dryRunSpeedFactor);
+		}
 		ui.setVisible(true);
 	}
 }
