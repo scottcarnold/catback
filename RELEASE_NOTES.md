@@ -9,6 +9,11 @@ CatBack is a simple system backup utility.
 + Bitwise File Compare Code: Joe Orost
 + Java Version: 1.8
 
+# CatBack 1.6 Release Notes
+
+# CatBack 1.6
++ File trees will now show hidden files
+
 # CatBack 1.5 Release Notes
 Released 3/12/2023
 ## Build

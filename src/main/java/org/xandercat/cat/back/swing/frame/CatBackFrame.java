@@ -500,8 +500,8 @@ public class CatBackFrame extends ApplicationFrame implements
 	private void initializeForNewBackup(final CatBackup15 backup) {	
 		// create the checkbox file trees
 		FileIconCache fileIconCache = ResourceManager.getInstance().getResource(FileIconCache.class);
-		this.includedTree = CheckboxFileTreeFactory.createCheckboxFileTree(false, false, fileIconCache, "Included Files");
-		this.excludedTree = CheckboxFileTreeFactory.createCheckboxFileTree(false, false, fileIconCache, "Excluded Files");
+		this.includedTree = CheckboxFileTreeFactory.createCheckboxFileTree(false, true, fileIconCache, "Included Files");
+		this.excludedTree = CheckboxFileTreeFactory.createCheckboxFileTree(false, true, fileIconCache, "Excluded Files");
 		this.includedTree.setExpandSelectedPaths(false);
 		this.excludedTree.setExpandSelectedPaths(false);
 		this.includedTree.setCellRenderer(new CheckboxTreeCellRenderer(
