@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -39,7 +40,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xandercat.cat.back.BackupSizeCalculator;
 import org.xandercat.cat.back.CatBackSettings;
-import org.xandercat.cat.back.CatBackup15;
+import org.xandercat.cat.back.CatBackup16;
 import org.xandercat.cat.back.CatBackupTreeStates;
 import org.xandercat.cat.back.CatBackupUpdater;
 import org.xandercat.cat.back.engine.BackupEngineManager;
@@ -101,7 +102,7 @@ import org.xandercat.swing.zenput.processor.SourceProcessor;
  * @author Scott Arnold
  */
 public class CatBackFrame extends ApplicationFrame implements 
-		FileManagerListener<CatBackup15>, 
+		FileManagerListener<CatBackup16>, 
 		RecentlyLoadedActionListener,
 		ListSelectionListener {
 
@@ -110,7 +111,7 @@ public class CatBackFrame extends ApplicationFrame implements
 	
 	// management
 	private CatBackSettings settings;
-	private FileManager<CatBackup15> fileManager;
+	private FileManager<CatBackup16> fileManager;
 	private RecentlyLoadedFilesManager recentlyLoadedFilesManager;
 	private CheckboxFileTree includedTree;
 	private CheckboxFileTree excludedTree;
@@ -167,8 +168,8 @@ public class CatBackFrame extends ApplicationFrame implements
 		addCloseListener(new SaveOnCloseAction<CatBackSettings>(CatBackSettings.SETTINGS_FILE, settings, settingsFinalizer));
 
 		// create file manager and recently loaded files manager
-		this.fileManager = new FileManager<CatBackup15>(this, "catback", "Backup");
-		this.fileManager.setClassChecked(CatBackup15.class);
+		this.fileManager = new FileManager<CatBackup16>(this, "catback", "Backup");
+		this.fileManager.setClassChecked(CatBackup16.class);
 		this.fileManager.setImporter(new OldBackupImporter());
 		this.recentlyLoadedFilesManager = new RecentlyLoadedFilesManager(settings.getRecentlyLoadedFiles(), CatBackSettings.MAX_RECENTLY_LOADED_FILES);
 		this.recentlyLoadedFilesManager.addRecentlyLoadedActionListener(this);
@@ -439,7 +440,7 @@ public class CatBackFrame extends ApplicationFrame implements
 				"Application Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
-	private void saveTreeStates(CatBackup15 backup) {
+	private void saveTreeStates(CatBackup16 backup) {
 		try {
 			CatBackupTreeStates states = null;
 			if (CatBackSettings.TREESTATES_FILE.exists()) {
@@ -463,7 +464,7 @@ public class CatBackFrame extends ApplicationFrame implements
 		}
 	}
 	
-	private void loadTreeStates(CatBackup15 backup) {
+	private void loadTreeStates(CatBackup16 backup) {
 		if (CatBackSettings.TREESTATES_FILE.exists()) {
 			try {
 				CatBackupTreeStates states = FileManager.loadObject(CatBackSettings.TREESTATES_FILE, CatBackupTreeStates.class);
@@ -497,7 +498,7 @@ public class CatBackFrame extends ApplicationFrame implements
 		} 
 	}
 
-	private void initializeForNewBackup(final CatBackup15 backup) {	
+	private void initializeForNewBackup(final CatBackup16 backup) {	
 		// create the checkbox file trees
 		FileIconCache fileIconCache = ResourceManager.getInstance().getResource(FileIconCache.class);
 		this.includedTree = CheckboxFileTreeFactory.createCheckboxFileTree(false, true, fileIconCache, "Included Files");
@@ -514,13 +515,13 @@ public class CatBackFrame extends ApplicationFrame implements
 				new CatBackFileTreeCellRenderer(this.includedTree, this.excludedTree, fileIconCache)));
 		
 		// apply backup file selections to the file trees
-		List<File> includedFiles = backup.getIncludedFiles();
+		Set<File> includedFiles = backup.getIncludedFiles();
 		if (includedFiles != null) {
 			for (File bfile : includedFiles) {
 				this.includedTree.selectAddFile(bfile, backup.wasDirectory(bfile), true);
 			}
 		}
-		List<File> excludedFiles = backup.getExcludedFiles();
+		Set<File> excludedFiles = backup.getExcludedFiles();
 		if (excludedFiles != null) {
 			for (File bfile : excludedFiles) {
 				this.excludedTree.selectAddFile(bfile, backup.wasDirectory(bfile), true);
@@ -607,7 +608,7 @@ public class CatBackFrame extends ApplicationFrame implements
 	}
 	
 	public void executeNew() {
-		CatBackup15 backup = new CatBackup15();
+		CatBackup16 backup = new CatBackup16();
 		try {
 			if (fileManager.executeNew(backup) != null) { 
 				initializeForNewBackup(backup);
@@ -685,7 +686,7 @@ public class CatBackFrame extends ApplicationFrame implements
 	}
 
 	@Override
-	public void beforeSaveOrClose(CatBackup15 toSave) {
+	public void beforeSaveOrClose(CatBackup16 toSave) {
 		saveTreeStates(toSave);
 		try {
 			this.inputProcessor.validate();

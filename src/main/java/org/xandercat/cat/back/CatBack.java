@@ -1,7 +1,6 @@
 package org.xandercat.cat.back;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -37,7 +36,7 @@ import org.xandercat.swing.util.PlatformTool;
 public class CatBack {
 
 	private static final String APPLICATION_NAME = "CatBack";
-	private static final String APPLICATION_VERSION = "1.5";
+	private static final String APPLICATION_VERSION = "1.6";
 	
 	public static final String LOG_KEY = "-l";
 	public static final String IMMEDIATE_BACKUP_KEY = "-b";

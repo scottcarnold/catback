@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -17,7 +18,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.xandercat.cat.back.CatBackup15;
+import org.xandercat.cat.back.CatBackup16;
 import org.xandercat.cat.back.engine.worklet.ApplyIncrementalBackupLimits;
 import org.xandercat.cat.back.engine.worklet.BackupEngineWorklet;
 import org.xandercat.cat.back.engine.worklet.CompareFiles;
@@ -55,7 +56,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 	private List<BackupEngineListener> listeners;
 	private FileIconCache fileIconCache;
 	private CheckboxFileTree excludedTree;
-	private List<File> currentFilesAndDirectories;
+	private Set<File> currentFilesAndDirectories;
 	private File baseBackupDirectory;			// base backup directory
 	private File backupDirectory;				// backup directory where latest backup is stored
 	private File incrementalBackupDirectory;	// backup directory where incremental backup is stored
@@ -83,7 +84,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 	private boolean active;
 	
 	public BackupEngine(ApplicationFrame parent, 
-			CatBackup15 backup, 
+			CatBackup16 backup, 
 			FileIconCache fileIconCache, 
 			CheckboxFileTree excludedTree,
 			BackupStats stats) {

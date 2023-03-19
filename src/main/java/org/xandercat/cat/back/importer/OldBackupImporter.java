@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.xandercat.cat.back.CatBackup;
 import org.xandercat.cat.back.CatBackup15;
+import org.xandercat.cat.back.CatBackup16;
 import org.xandercat.swing.file.Importer;
 
 /**
@@ -12,12 +13,13 @@ import org.xandercat.swing.file.Importer;
  * 
  * @author Scott Arnold
  */
-public class OldBackupImporter implements Importer<CatBackup15> {
+public class OldBackupImporter implements Importer<CatBackup16> {
 
 	private final Set<Class<?>> fromObjectClasses = new HashSet<Class<?>>();
 	
 	public OldBackupImporter() {
 		fromObjectClasses.add(org.xandercat.cat.back.CatBackup.class);
+		fromObjectClasses.add(org.xandercat.cat.back.CatBackup15.class);
 	}
 	
 	@Override
@@ -33,11 +35,11 @@ public class OldBackupImporter implements Importer<CatBackup15> {
 	}
 
 	@Override
-	public CatBackup15 importObject(Object fromObject) {
-		CatBackup15 backup = null;
+	public CatBackup16 importObject(Object fromObject) {
+		CatBackup16 backup = null;
 		if (fromObject instanceof CatBackup) {
 			CatBackup oldBackup = (CatBackup) fromObject;
-			backup = new CatBackup15(oldBackup.getId());
+			backup = new CatBackup16(oldBackup.getId());
 			backup.setAlwaysLeaveCopyWindowOpen(oldBackup.isAlwaysLeaveCopyWindowOpen());
 			backup.setBackupDirectory(oldBackup.getBackupDirectory());
 			backup.setErrorsUntilBackupHalt(oldBackup.getErrorsUntilBackupHalt());
@@ -46,6 +48,22 @@ public class OldBackupImporter implements Importer<CatBackup15> {
 			backup.setKeepAtLeastTime(upgradeTimeDuration(oldBackup.getKeepAtLeastTime()));
 			backup.setKeepNoMoreThanBytes(upgradeByteSize(oldBackup.getKeepNoMoreThanBytes()));
 			backup.setKeepNoMoreThanTime(upgradeTimeDuration(oldBackup.getKeepNoMoreThanTime()));
+			backup.setLimitIncrementalBackups(oldBackup.isLimitIncrementalBackups());
+			backup.setName(oldBackup.getName());
+			backup.setScanLastBackup(oldBackup.isScanLastBackup());
+			backup.setShowFilesBeforeMoveCopy(oldBackup.isShowFilesBeforeMoveCopy());
+		}
+		if (fromObject instanceof CatBackup15) {
+			CatBackup15 oldBackup = (CatBackup15) fromObject;
+			backup = new CatBackup16(oldBackup.getId());
+			backup.setAlwaysLeaveCopyWindowOpen(oldBackup.isAlwaysLeaveCopyWindowOpen());
+			backup.setBackupDirectory(oldBackup.getBackupDirectory());
+			backup.setErrorsUntilBackupHalt(oldBackup.getErrorsUntilBackupHalt());
+			backup.setExcludedFiles(oldBackup.getExcludedFiles(), oldBackup.getExcludedDirectories());
+			backup.setIncludedFiles(oldBackup.getIncludedFiles(), oldBackup.getIncludedDirectories());
+			backup.setKeepAtLeastTime(oldBackup.getKeepAtLeastTime());
+			backup.setKeepNoMoreThanBytes(oldBackup.getKeepNoMoreThanBytes());
+			backup.setKeepNoMoreThanTime(oldBackup.getKeepNoMoreThanTime());
 			backup.setLimitIncrementalBackups(oldBackup.isLimitIncrementalBackups());
 			backup.setName(oldBackup.getName());
 			backup.setScanLastBackup(oldBackup.isScanLastBackup());

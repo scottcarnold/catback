@@ -2,7 +2,7 @@ package org.xandercat.cat.back.swing.frame;
 
 import java.awt.FlowLayout;
 import java.io.File;
-import java.util.List;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.xandercat.cat.back.CatBackup15;
+import org.xandercat.cat.back.CatBackup16;
 import org.xandercat.cat.back.engine.BackupEngine;
 import org.xandercat.cat.back.engine.BackupEngineListener;
 import org.xandercat.cat.back.engine.BackupStats;
@@ -61,7 +61,7 @@ public class ImmediateFileBackupFrame extends ApplicationFrame implements Backup
 		super.setVisible(visible);
 		if (visible) {
 			try {
-				CatBackup15 backup = (CatBackup15) FileManager.loadObject(backupProfileFilename, CatBackup15.class);
+				CatBackup16 backup = (CatBackup16) FileManager.loadObject(backupProfileFilename, CatBackup16.class);
 				Processor processor = new SourceProcessor(backup);
 				if (!processor.validate()) {
 					throw new IllegalArgumentException("Backup settings are invalid.");
@@ -69,7 +69,7 @@ public class ImmediateFileBackupFrame extends ApplicationFrame implements Backup
 				FileIconSet fileIconSet = FileIconSetFactory.buildIconSet(FileIconSetFactory.GLAZE);
 				FileIconCache fileIconCache = new FileIconCache(fileIconSet);
 				CheckboxFileTree excludedTree = CheckboxFileTreeFactory.createCheckboxFileTree(false, false, fileIconCache);
-				List<File> excludedFiles = backup.getExcludedFiles();
+				Set<File> excludedFiles = backup.getExcludedFiles();
 				if (excludedFiles != null) {
 					for (File bfile : excludedFiles) {
 						excludedTree.selectAddFile(bfile, backup.wasDirectory(bfile), true);

@@ -21,7 +21,7 @@ public abstract class LoadFilesWorklet<T extends Collection<BackupFile>> extends
 	protected File backupDirectory;
 	protected CheckboxFileTree excludedTree;
 	private volatile long filesSize;
-	private int filesCount;
+	private volatile int filesCount;
 	
 	public LoadFilesWorklet(BackupEngine backupEngine, CheckboxFileTree excludedTree, T backupFiles, File backupDirectory) {
 		super(backupEngine);

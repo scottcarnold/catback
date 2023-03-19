@@ -21,11 +21,11 @@ public class LoadCurrentFiles extends LoadFilesWorklet<Set<BackupFile>> {
 
 	private static final Logger log = LogManager.getLogger(LoadCurrentFiles.class);
 	
-	private List<File> files;
+	private Set<File> files;
 	private long totalFiles = -1;
 	private boolean directorySizeLoadStarted;
 	
-	public LoadCurrentFiles(BackupEngine backupEngine, CheckboxFileTree excludedTree, List<File> files, File backupDirectory) {
+	public LoadCurrentFiles(BackupEngine backupEngine, CheckboxFileTree excludedTree, Set<File> files, File backupDirectory) {
 		super(backupEngine, excludedTree, new HashSet<BackupFile>(), backupDirectory);
 		this.files = files;
 	}

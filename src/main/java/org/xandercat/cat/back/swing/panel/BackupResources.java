@@ -1,7 +1,7 @@
 package org.xandercat.cat.back.swing.panel;
 
 import org.xandercat.cat.back.BackupSizeCalculator;
-import org.xandercat.cat.back.CatBackup15;
+import org.xandercat.cat.back.CatBackup16;
 import org.xandercat.cat.back.engine.BackupStats;
 import org.xandercat.swing.file.FileManager;
 import org.xandercat.swing.tree.CheckboxFileTree;
@@ -9,17 +9,17 @@ import org.xandercat.swing.zenput.processor.InputProcessor;
 
 public class BackupResources {
 
-	private FileManager<CatBackup15> fileManager;
+	private FileManager<CatBackup16> fileManager;
 	private InputProcessor inputProcessor;
 	private CheckboxFileTree includedTree;
 	private CheckboxFileTree excludedTree;
 	private BackupSizeCalculator backupSizeCalculator;
 	private BackupStats backupStats;
 	
-	public FileManager<CatBackup15> getFileManager() {
+	public FileManager<CatBackup16> getFileManager() {
 		return fileManager;
 	}
-	public void setFileManager(FileManager<CatBackup15> fileManager) {
+	public void setFileManager(FileManager<CatBackup16> fileManager) {
 		this.fileManager = fileManager;
 	}
 	public InputProcessor getInputProcessor() {
