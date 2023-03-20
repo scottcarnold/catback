@@ -11,8 +11,14 @@ CatBack is a simple system backup utility.
 
 # CatBack 1.6 Release Notes
 
-# CatBack 1.6
+## Build
++ Updated CatSwing version to 1.0.6
+
+## CatBack 1.6
 + File trees will now show hidden files
++ Fixed bug where same file or directory could get added to a backup more than once
++ Fixed bug with missing files not preserving the full directory structure of where they are missing from (fixed in CatSwing update)
++ Directories will no longer appear with file separators in the name (changed with CatSwing update)
 
 # CatBack 1.5 Release Notes
 Released 3/12/2023
