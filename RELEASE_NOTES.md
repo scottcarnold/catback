@@ -18,8 +18,10 @@ CatBack is a simple system backup utility.
 + File trees will now show hidden files
 + Fixed bug where same file or directory could get added to a backup more than once
 + Fixed bug with missing files not preserving the full directory structure of where they are missing from (fixed in CatSwing update)
++ Summary page will now show warning message if any selected files or folders for the backup are missing
 + System files such as Mac .DS_Store files will now consistently be ignored (fixed in CatSwing update)
 + Directories will no longer appear with file separators in the name (changed with CatSwing update)
++ Added safeguard to ensure user cannot launch backup that includes selections from within its own backup location
 
 # CatBack 1.5 Release Notes
 Released 3/12/2023

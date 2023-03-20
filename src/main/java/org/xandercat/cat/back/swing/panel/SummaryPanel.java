@@ -33,6 +33,7 @@ import org.xandercat.swing.file.FilesSize;
 import org.xandercat.swing.label.FileLabel;
 import org.xandercat.swing.label.RotatingIconLabel;
 import org.xandercat.swing.panel.GroupAlignedPanelBuilder;
+import org.xandercat.swing.tree.CheckboxFileTree;
 import org.xandercat.swing.util.FileUtil;
 import org.xandercat.swing.util.ResourceManager;
 import org.xandercat.swing.zenput.error.ValidationException;
@@ -64,10 +65,12 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 	private JLabel ibLabel3;
 	private InputProcessor inputProcessor;
 	private JLabel validationLabel;
+	private JLabel missingFilesLabel;
 	private Color defaultValidationForegroundColor;
 	private JButton showValidationExceptionsButton;
 	private List<ValidationException> validationExceptions;
 	private BackupStats backupStats;
+	private CheckboxFileTree includedTree;
 	
 	public SummaryPanel(CatBackFrame catBackFrame, FileManager<CatBackup16> fileManager) {
 		this.catBackFrame = catBackFrame;
@@ -88,6 +91,8 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 		BackupEngineManager backupEngineManager = ResourceManager.getInstance().getResource(BackupEngineManager.class);
 		this.beginBackupButton.setAction(backupEngineManager.getBeginBackupAction());
 		this.validationLabel = ComponentFactory.createDetailLabel(" ");
+		this.missingFilesLabel = ComponentFactory.createDetailLabel(" ");
+		this.missingFilesLabel.setForeground(Color.RED);
 		this.showValidationExceptionsButton = new JButton(Icons.QUESTION_ICON);
 		this.showValidationExceptionsButton.addActionListener(this);
 		this.defaultValidationForegroundColor = this.validationLabel.getForeground();
@@ -111,6 +116,7 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 		validationPanel.add(this.validationLabel);
 		validationPanel.add(this.showValidationExceptionsButton);
 		builder.addRow(ComponentFactory.createInputLabel("Validation:"), validationPanel);
+		builder.addRow(null, this.missingFilesLabel);
 		builder.addVerticalStrut(10);
 		builder.addRow(null, this.beginBackupButton);
 		this.panel = builder.build();
@@ -132,8 +138,9 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 		this.ibLabel2.setText(null);
 		this.ibLabel3.setText(null);
 		this.validationLabel.setText(null);
+		this.missingFilesLabel.setText(null);
 		this.inputProcessor = null;
-
+		this.includedTree = null;
 	}
 
 	@Override
@@ -142,6 +149,7 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 		this.backup = fileManager.getObject();
 		this.backupStats = backupResources.getBackupStats();
 		this.inputProcessor = backupResources.getInputProcessor();
+		this.includedTree = backupResources.getIncludedTree();
 		if (fileManager.getFileName() == null) {
 			this.catBackupFileLabel.setText("<Not Created Yet>");
 			this.catBackupFileLabel.setIcon(null);
@@ -194,6 +202,14 @@ public class SummaryPanel implements CatBackPanel, BackupSizeListener, FileManag
 			this.ibLabel1.setText("Unlimited.");
 			this.ibLabel2.setText(null);
 			this.ibLabel3.setText(null);
+		}
+		int invalidSelectionCount = this.includedTree.getInvalidSelectionCount();
+		if (invalidSelectionCount > 0) {
+			if (invalidSelectionCount == 1) {
+				this.missingFilesLabel.setText(String.valueOf(invalidSelectionCount) + " selected item is missing.");
+			} else {
+				this.missingFilesLabel.setText(String.valueOf(invalidSelectionCount) + " selected items are missing.");
+			}
 		}
 		setStats();
 	}
