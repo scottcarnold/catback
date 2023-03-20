@@ -81,6 +81,7 @@ public class CatBack {
 		}
 
 		// load application settings
+		PlatformTool.setIgnoreSystemFiles(true); // this could be made into a setting
 		Object settingsObject = null;
 		final CatBackSettings settings;
 		try {

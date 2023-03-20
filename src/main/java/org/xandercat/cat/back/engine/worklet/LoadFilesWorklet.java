@@ -7,6 +7,7 @@ import java.util.List;
 import org.xandercat.cat.back.engine.BackupEngine;
 import org.xandercat.cat.back.file.BackupFile;
 import org.xandercat.swing.tree.CheckboxFileTree;
+import org.xandercat.swing.util.PlatformTool;
 
 /**
  * Worklet for loading a list of BackupFile.
@@ -14,8 +15,6 @@ import org.xandercat.swing.tree.CheckboxFileTree;
  * @author Scott Arnold
  */
 public abstract class LoadFilesWorklet<T extends Collection<BackupFile>> extends BackupEngineWorklet<List<BackupFile>> {
-
-	private static final String DS_STORE = ".DS_Store";	// Mac file that should be ignored
 	
 	protected T backupFiles;
 	protected File backupDirectory;
@@ -35,12 +34,10 @@ public abstract class LoadFilesWorklet<T extends Collection<BackupFile>> extends
 	}
 	
 	protected void loadFile(File file, BackupFile.Type type) {
-		if (!DS_STORE.equals(file.getName())) {
-			backupFiles.add(new BackupFile(file, type, backupDirectory));
-			filesSize += file.length();
-			if (!file.isDirectory()) {
-				filesCount++;
-			}
+		backupFiles.add(new BackupFile(file, type, backupDirectory));
+		filesSize += file.length();
+		if (!file.isDirectory()) {
+			filesCount++;
 		}
 		publish("Inspecting " + file.getName());
 		advanceProgress(1);
@@ -48,7 +45,7 @@ public abstract class LoadFilesWorklet<T extends Collection<BackupFile>> extends
 	
 	protected void loadFilesForDirectory(File directory, BackupFile.Type type) {
 		if (!isCancelled()) {
-			File[] dirFiles = directory.listFiles();
+			File[] dirFiles = directory.listFiles(PlatformTool.FILE_FILTER);
 			if (dirFiles != null) {
 				for (File file : dirFiles) {
 					if (isExcluded(file)) {
