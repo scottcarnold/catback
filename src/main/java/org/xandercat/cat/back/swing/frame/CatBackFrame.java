@@ -558,7 +558,7 @@ public class CatBackFrame extends ApplicationFrame implements
 		
 		// initialize Backup Engine Manager for new backup
 		BackupEngineManager bem = ResourceManager.getInstance().getResource(BackupEngineManager.class);
-		bem.initializeForBackup(inputProcessor, excludedTree, backupStats);
+		bem.initializeForBackup(inputProcessor, includedTree, excludedTree, backupStats);
 		
 		// setup all CatBack panels
 		BackupResources res = new BackupResources();

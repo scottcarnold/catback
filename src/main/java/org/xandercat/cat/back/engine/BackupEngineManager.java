@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 
 import org.xandercat.cat.back.CatBackup16;
 import org.xandercat.cat.back.swing.frame.CatBackFrame;
@@ -51,6 +52,12 @@ public class BackupEngineManager implements FileManagerListener<CatBackup16>{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			CatBackup16 backup = backupFileManager.getObject();
+			if (includedTree.isDescendantChecked(backup.getBackupDirectory()) && !excludedTree.isChecked(backup.getBackupDirectory())) {
+				JOptionPane.showMessageDialog(catBackFrame, 
+						"The backup cannot include selections from within its own backup location.", 
+						"Invalid Selection", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			List<ValidationException> validationExceptions = inputProcessor.getErrors();
 			if (validationExceptions == null || validationExceptions.size() == 0) {
 				executingBackupIDs.add(backup.getId());
@@ -83,6 +90,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup16>{
 	private final FileManager<CatBackup16> backupFileManager;
 	private final Set<String> executingBackupIDs = new HashSet<String>();
 	private InputProcessor inputProcessor;
+	private CheckboxFileTree includedTree;
 	private CheckboxFileTree excludedTree;
 	private BackupStats stats;
 	private BeginBackupAction beginBackupAction;
@@ -137,10 +145,13 @@ public class BackupEngineManager implements FileManagerListener<CatBackup16>{
 	 * Initializes the BackupEngineManager for a new backup.
 	 * 
 	 * @param inputProcessor	InputProcessor for backup input fields
+	 * @param includedTree      Included Files tree
+	 * @param excludedTree      Excluded Files tree
 	 * @param backupStats		Backup statistics for backup
 	 */
-	public void initializeForBackup(InputProcessor inputProcessor, CheckboxFileTree excludedTree, BackupStats backupStats) {
+	public void initializeForBackup(InputProcessor inputProcessor, CheckboxFileTree includedTree, CheckboxFileTree excludedTree, BackupStats backupStats) {
 		this.inputProcessor = inputProcessor;
+		this.includedTree = includedTree;
 		this.excludedTree = excludedTree;
 		this.stats = backupStats;
 		beginBackupAction.updateEnabled();
@@ -155,6 +166,7 @@ public class BackupEngineManager implements FileManagerListener<CatBackup16>{
 	public void afterClose() {
 		this.inputProcessor = null;
 		this.excludedTree = null;
+		this.includedTree = null;
 		beginBackupAction.updateEnabled();
 	}
 
