@@ -6,9 +6,9 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.xandercat.cat.back.swing.zenput.annotation.ValidateTimeDuration;
@@ -38,10 +38,11 @@ public class CatBackup16 implements Serializable {
 	@ValidateFile(mode=Mode.DIRECTORIES_ONLY, exists=true)
 	private File backupDirectory;
 	
-	private Set<File> includedFiles = new HashSet<File>();         // set of all files, including directories
-	private Set<File> includedDirectories = new HashSet<File>();   // set of directories only
-	private Set<File> excludedFiles = new HashSet<File>();         // set of all excluded files, including directories
-	private Set<File> excludedDirectories = new HashSet<File>();   // set of excluded directories only
+	// need to use sorted sets so that the backup only appears changed if the included files are actually different
+	private Set<File> includedFiles = new TreeSet<File>();         // set of all files, including directories
+	private Set<File> includedDirectories = new TreeSet<File>();   // set of directories only
+	private Set<File> excludedFiles = new TreeSet<File>();         // set of all excluded files, including directories
+	private Set<File> excludedDirectories = new TreeSet<File>();   // set of excluded directories only
 	
 	@InputField(title="Show Files Before Move/Copy")
 	private boolean showFilesBeforeMoveCopy;
