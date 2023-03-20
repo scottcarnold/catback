@@ -67,6 +67,7 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 		BackupPathGenerator pathGenerator = new BackupPathGenerator(backupDirectory);
 		this.copyFrame = new FileCopyProcessFrame(
 				filesToCopy, fileIconCache, pathGenerator, true, !alwaysLeaveCopyWindowOpen, errorsUntilHalt);
+		this.copyFrame.setLogCopiedFilesWithoutAbsolutePaths(true); // cuts down on amount of text being fed to scroll pane
 		this.copyFrame.addFileCopyListener(this);
 		this.copyFrame.addFileCopyProgressListener(this);
 		if (dryRun) {
@@ -133,14 +134,14 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 		this.countDownLatch.countDown();	
 	}
 
-	public void fileCopied(File from, File to, FileCopier.CopyResult result) {
-		if (!from.isDirectory()) {
+	public void fileCopied(File from, File to, boolean isDirectory, FileCopier.CopyResult result) {
+		if (!isDirectory) {
 			filesCopied++;	
 		}
 		filesSize += from.length();
 	}
 
-	public void fileCopying(File from, File to) {
+	public void fileCopying(File from, File to, boolean isDirectory) {
 		publish(dryRunPrefix + "Copying " + from.getName());
 	}
 }
