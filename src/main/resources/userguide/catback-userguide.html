@@ -22,7 +22,7 @@ h3 {
 <body style="margin: 25px; font-size: 14pt;">
 <div class="heading">
 	<h1>CatBack User Guide</h1>
-	<h2>CatBack version 1.5</h2>
+	<h2>CatBack version 1.6</h2>
 </div>
 <h3>Contents</h3>
 <ul class="toc">
@@ -73,9 +73,9 @@ The required dependencies include <a href="https://repo1.maven.org/maven2/org/ap
 <a href="https://github.com/scottcarnold/catswing/releases/download/catswing-1.0.5/catswing-1.0.5.jar">catswing-1.0.5</a>, 
 <a href="https://github.com/scottcarnold/zenput/releases/download/zenput-1.0.1/zenput-1.0.1.jar">zenput-1.0.1</a>, 
 and, for non Mac systems, <a href="https://github.com/scottcarnold/applestub/releases/download/applestub-1.0.0/applestub-1.0.0.jar">applestub-1.0.0</a>.</li>
-<pre style="margin-left: 25px;">javaw -Dlog4j.configurationFile=file:\\\C:\CatBack\log4j2.xml -jar catback-1.5.0.jar</pre>
+<pre style="margin-left: 25px;">javaw -Dlog4j.configurationFile=file:\\\C:\CatBack\log4j2.xml -jar catback-1.6.0.jar</pre>
 <li>Run the "fat jar":  A "fat jar" has all dependencies packaged within a single jar.  You no longer need to worry about other dependencies with this approach, but you will still need to specify the VM argument if you want logging to work.</li>
-<pre style="margin-left: 25px;">javaw -Dlog4j.configurationFile=file:\\\C:\CatBack\log4j2.xml -jar catback-1.5.0-jar-with-dependencies.jar</pre>
+<pre style="margin-left: 25px;">javaw -Dlog4j.configurationFile=file:\\\C:\CatBack\log4j2.xml -jar catback-1.6.0-jar-with-dependencies.jar</pre>
 <li>Run the executable:  The CatBack build uses Launch4J to build an executable version of CatBack that can be used on Windows systems.  You no longer have to specify the VM argument
 for the log configuration file, but you still need Java 1.8 or later installed on your system.  The exe is essentially a wrapper around the CatBack fat jar and is the easiest way to run CatBack, but because the exe file is not signed with a certificate issued by a common certificate authority, 
 it should be noted that some virus scanning software may flag it as suspicious or as a threat.</li>
@@ -228,7 +228,7 @@ CatBack has been designed to work with large backups, and has been successfully 
 
 <p style="font-size: 12pt;">* The file comparison code contributed by Joe Orost is for comparing  Backup Profiles only, to determine if the user should be prompted to save their Backup Profile before program exit.  It is not used for the actual backup process.  The backup file comparison process looks only at file length and modified date, whereas the code provided by Joe Orost does a thorough bitwise comparison.</p>
 <div style="font-size: 10pt; border-top: 1px solid black; text-align: right">
-CatBack v 1.5 - March 12, 2023
+CatBack v 1.6 - March 20, 2023
 </div>
 </body>
 </html>
