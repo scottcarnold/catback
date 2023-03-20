@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>org.xandercat</groupId>
 			<artifactId>catswing</artifactId>
-			<version>1.0.6-SNAPSHOT</version>
+			<version>1.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.xandercat</groupId>

@@ -10,7 +10,7 @@ CatBack is a simple system backup utility.
 + Java Version: 1.8
 
 # CatBack 1.6 Release Notes
-
+Released 3/20/2023
 ## Build
 + Updated CatSwing version to 1.0.6
 
@@ -18,6 +18,7 @@ CatBack is a simple system backup utility.
 + File trees will now show hidden files
 + Fixed bug where same file or directory could get added to a backup more than once
 + Fixed bug with missing files not preserving the full directory structure of where they are missing from (fixed in CatSwing update)
++ Fixed issue where backing up an enormous number of small files could overload the event dispatch thread with events
 + Summary page will now show warning message if any selected files or folders for the backup are missing
 + System files such as Mac .DS_Store files will now consistently be ignored (fixed in CatSwing update)
 + Directories will no longer appear with file separators in the name (changed with CatSwing update)
