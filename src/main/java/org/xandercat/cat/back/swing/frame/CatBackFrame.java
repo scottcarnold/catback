@@ -179,11 +179,15 @@ public class CatBackFrame extends ApplicationFrame implements
 		
 		// create About dialog
 		ImageIcon aboutImageIcon = new ImageIcon(Images.getImage(Images.CATBACK));
-		InputStream aboutMarkdownIS = getClass().getResourceAsStream("/RELEASE_NOTES.md");
 		this.aboutDialog = new AboutDialog(this);
 		this.aboutDialog.setImageIcon(aboutImageIcon);
-		this.aboutDialog.addMarkdownContent(aboutMarkdownIS, "background-color: #F0F0F0; padding-left: 10px; padding-right: 10px");
-		this.aboutDialog.build();
+		try {
+			InputStream aboutMarkdownIS = getClass().getResourceAsStream("/RELEASE_NOTES.md");
+			this.aboutDialog.addMarkdownContent(aboutMarkdownIS, "background-color: #F0F0F0; padding-left: 10px; padding-right: 10px");
+		} catch (Exception e) {
+			log.error("About Dialog could not be initialized.", e);
+		}
+		this.aboutDialog.build();	
 		
 		// create icon cache
 		FileIconSet fileIconSet = FileIconSetFactory.buildIconSet(FileIconSetFactory.GLAZE);
@@ -629,7 +633,7 @@ public class CatBackFrame extends ApplicationFrame implements
 				this.catBackPanelList.addListSelectionListener(this);
 				this.catBackPanelList.setEnabled(true);
 				this.catBackPanelList.setSelectedIndex(0);	// summary panel
-			}
+			} 
 		} catch (IOException ioe) {
 			errorPrompt("Unable to open file", ioe);
 		}
@@ -682,7 +686,18 @@ public class CatBackFrame extends ApplicationFrame implements
 
 	@Override
 	public void actionPerformed(RecentlyLoadedActionEvent event) {
-		executeOpen(event.getFile());		
+		if (!event.getFile().exists()) {
+			int result = JOptionPane.showConfirmDialog(this, 
+					"The selected backup file no longer exists:\n\n" + event.getFile().getAbsolutePath() + "\n\nDo you want to remove it from the menu?", 
+					"Backup Does Not Exist", 
+					JOptionPane.YES_NO_OPTION, 
+					JOptionPane.WARNING_MESSAGE);
+			if (result == JOptionPane.YES_OPTION) {
+				this.recentlyLoadedFilesManager.remove(event.getFile());
+			}
+		} else {
+			executeOpen(event.getFile());
+		}
 	}
 
 	@Override
