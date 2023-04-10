@@ -156,6 +156,11 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 	@Override
 	protected Void doInBackground() throws Exception {
 		this.active = true;
+		if (dryRun) {
+			log.info(DRY_RUN_PREFIX + " Backup started: " + this.backupName);
+		} else {
+			log.info("Backup started: " + this.backupName);
+		}
 		try {
 		
 			this.stat.setBackupId(backupId);
@@ -168,6 +173,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 				loadCurrentFiles.enableDryRun(DRY_RUN_PREFIX, speedFactor);
 			}
 			publishStep(1, loadCurrentFiles);
+			log.info("Running Step 1 - Inspecting files.");
 			List<BackupFile> currentFiles = loadCurrentFiles.execute();		
 			this.stat.setTotalFiles(loadCurrentFiles.getFilesCount());
 			
@@ -186,6 +192,11 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 				return null;
 			}
 			if (scanLastBackup || backupFiles == null) {
+				if (scanLastBackup) {
+					log.info("Running Step 2 - Inspecting Last Backup.");
+				} else {
+					log.info("Running Step 2 - Inspecting Last Backup. (Step cannot be skipped on this run; metadata from last backup unavailable.)");
+				}
 				this.loadBackupFiles = new LoadBackupFiles(this, excludedTree, backupDirectory, stats.getLatestStat());
 				if (dryRun) {
 					loadBackupFiles.enableDryRun(DRY_RUN_PREFIX, speedFactor);
@@ -193,6 +204,8 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 				publishStep(2, loadBackupFiles);
 				backupFiles = loadBackupFiles.execute();
 				this.backupSize = loadBackupFiles.getFilesSize();
+			} else {
+				log.info("Skipping Step 2 - Inspecting Last Backup. (Using metadata from last backup.)");
 			}
 			if (isCancelled()) {
 				return null;
@@ -205,6 +218,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 			if (showMoveCopyDialog && !runQuiet) {
 				compareFiles.enableShowMoveCopyDialog(parent, fileIconCache);
 			}
+			log.info("Running Step 3 - Processing/Comparing Files.");
 			if (!compareFiles.execute().booleanValue()) {
 				this.stat.setBackupStatus(BackupStatus.CANCELLED_BEFORE);
 				cancel(true);
@@ -225,7 +239,10 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 					applyBackupLimits.enableDryRun(DRY_RUN_PREFIX, speedFactor);
 				}
 				publishStep(4, applyBackupLimits);
+				log.info("Running Step 4 - Removing Expired Incremental Backups.");
 				applyBackupLimits.execute();
+			} else {
+				log.info("Skipping Step 4 - Removing Expired Incremental Backups. (Incremental backups are unlimited.)");
 			}
 			if (isCancelled()) {
 				return null;
@@ -239,8 +256,11 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 					moveFiles.enableDryRun(DRY_RUN_PREFIX, speedFactor);
 				}
 				publishStep(5, moveFiles);
+				log.info("Running Step 5 - Moving Old Files.");
 				moveFiles.execute();
 				this.backupSize -= moveFiles.getFilesSize();
+			} else {
+				log.info("Skipping Step 5 - Moving Old Files.  (No files need to be moved.)");
 			}
 			if (isCancelled()) {
 				return null;
@@ -253,17 +273,21 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 					this.copyFiles.enableDryRun(DRY_RUN_PREFIX, speedFactor);
 				}
 				publishStep(6, copyFiles);
+				log.info("Running Step 6 - Copying New/Changed Files.");
 				boolean haltedDueToErrors = copyFiles.execute();
 				this.resolutionRequired = copyFiles.isResolutionRequired();
 				this.copyCancelled = copyFiles.isCopyCancelled() || haltedDueToErrors;
 				if (!copyCancelled) {
 					this.backupSize += copyFiles.getFilesSize();
 				}
+			} else {
+				log.info("Skipping Step 6 - Copying New/Changed Files.  (No files need to be copied.)");
 			}
 		
 			// finally, save list of backup files to latest directory; 
 			// this allows step 2 to be bypassed on next backup if scan last backup flag is off
 			if (!isCancelled() && !copyCancelled) {
+				log.info("Finishing - Saving Metadata For Completed Backup");
 				publish(new BackupEngineProgress("Finishing", "Saving backup file list"));
 				backupFiles.removeAll(filesToMove);
 				for (File file : filesToCopy) {
@@ -334,6 +358,7 @@ public class BackupEngine extends SwingWorker<Void, BackupEngineProgress> implem
 				backupStatus = DRY_RUN_PREFIX + backupStatus;
 			}
 			final String backupStatusString = backupStatus;
+			log.info("Backup process completed with status: " + this.stat.getBackupStatus().name());
 			SwingUtilities.invokeLater(() -> {
 				if (!runQuiet) {
 					JOptionPane.showMessageDialog(parent, backupName + "\n" + backupStatusString + "\nOlder files moved: " + this.stat.getFilesMoved() + "\nNewer files copied: " + this.stat.getFilesCopied());

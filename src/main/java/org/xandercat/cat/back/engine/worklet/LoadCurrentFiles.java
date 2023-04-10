@@ -42,7 +42,7 @@ public class LoadCurrentFiles extends LoadFilesWorklet<Set<BackupFile>> {
 
 	@Override
 	public List<BackupFile> execute() throws Exception {
-		log.info("Loading current files list...");
+		log.debug("Loading current files list...");
 		Set<BackupFile> currentFilesSet = backupFiles;	// start out using set for performance
 		for (File file : files) {
 			if (isCancelled()) {

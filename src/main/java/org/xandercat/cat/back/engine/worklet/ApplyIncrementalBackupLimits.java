@@ -56,7 +56,7 @@ public class ApplyIncrementalBackupLimits extends BackupEngineWorklet<Void> {
 
 	@Override
 	public Void execute() throws Exception {
-		log.info(dryRunPrefix + "Applying incremental backup limits...");
+		log.debug(dryRunPrefix + "Applying incremental backup limits...");
 		FileFilter filter = new FileFilter() {
 			public boolean accept(File file) {
 				return file.isDirectory() 

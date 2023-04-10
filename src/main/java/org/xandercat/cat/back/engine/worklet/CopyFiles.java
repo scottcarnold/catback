@@ -63,7 +63,7 @@ public class CopyFiles extends BackupEngineWorklet<Boolean> implements FileCopyL
 	
 	@Override
 	public Boolean execute() throws Exception {
-		log.info(dryRunPrefix + "Backing up " + filesToCopy.size() + " files to main backup directory...");
+		log.debug(dryRunPrefix + "Backing up " + filesToCopy.size() + " files to main backup directory...");
 		BackupPathGenerator pathGenerator = new BackupPathGenerator(backupDirectory);
 		this.copyFrame = new FileCopyProcessFrame(
 				filesToCopy, fileIconCache, pathGenerator, true, !alwaysLeaveCopyWindowOpen, errorsUntilHalt);

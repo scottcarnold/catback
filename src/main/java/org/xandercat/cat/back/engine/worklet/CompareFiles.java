@@ -57,7 +57,7 @@ public class CompareFiles extends BackupEngineWorklet<Boolean> {
 	
 	@Override
 	public Boolean execute() throws Exception {
-		log.info("Comparing previous list to current list...");
+		log.debug("Comparing previous list to current list...");
 		Iterator<BackupFile> previousFilesIter = previousFiles.iterator();
 		Iterator<BackupFile> currentFilesIter = currentFiles.iterator();
 		BackupFile previousFile = previousFilesIter.hasNext()? previousFilesIter.next() : null;

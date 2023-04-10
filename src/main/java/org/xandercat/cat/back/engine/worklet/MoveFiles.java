@@ -44,7 +44,7 @@ public class MoveFiles extends BackupEngineWorklet<Void> {
 
 	@Override
 	public Void execute() throws Exception {
-		log.info(dryRunPrefix + "Moving changed and deleted files to incremental backup directory...");
+		log.debug(dryRunPrefix + "Moving changed and deleted files to incremental backup directory...");
 		if (dryRun) {
 			log.info(dryRunPrefix + "Incremental backup directory to create: " + incrementalBackupDirectory.getAbsolutePath());
 		} else {

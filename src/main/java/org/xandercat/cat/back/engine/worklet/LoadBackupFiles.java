@@ -35,7 +35,7 @@ public class LoadBackupFiles extends LoadFilesWorklet<List<BackupFile>> {
 
 	@Override
 	public List<BackupFile> execute() throws Exception {
-		log.info("Loading previous files list (est. " + totalFiles + ")...");
+		log.debug("Loading previous files list (est. " + totalFiles + ")...");
 		List<BackupFile> previousFiles = backupFiles;
 		loadFilesForDirectory(backupDirectory, BackupFile.Type.DESTINATION);
 		if (isCancelled()) {
